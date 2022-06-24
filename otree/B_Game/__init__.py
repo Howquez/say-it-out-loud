@@ -30,6 +30,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     share = models.IntegerField(doc="the share the dictator allocates to the recipient.",
+                                min=0,
                                 blank=True)
 
 # FUNCTIONS

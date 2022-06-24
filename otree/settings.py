@@ -2,7 +2,7 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='beta',
+        name='Dictator Game',
         app_sequence=["A_Intro", "B_Game", "C_Outro"],
         num_demo_participants=4,
     ),
