@@ -1,31 +1,10 @@
-{{ block title }}
-    Page title
-{{ endblock }}
-{{ block content }}
-
-This task is about dividing money between yourself and another person to whom you are randomly
-matched. You do not know this other person and you will not knowingly meet him/her.
-
-You have been randomly assigned the role of the “allocator”. The other person is in the role of the
-“recipient”.
-
-You are endowed with 10€, the recipient is endowed with 0€.
-You can decide how much of your 10€ endowment to transfer to the recipient. You can choose any
-amount between 0€ and 10€. The recipient receives the amount that you decide to transfer to
-him/her; you receive the amount that you decide not to transfer and thus to keep.
-How much of your 10€ endowment do you want to transfer to the recipient?
-
-You have been randomly assigned the role of the “recipient”. The other person is in the role of the
-“allocator”.
-You are endowed with 0€, the allocator is endowed with 10€.
-The allocator can decide how much of his/her 10€ endowment to transfer to you. The allocator can
-choose any amount between 0€ and 10€. You receive the amount the allocator decides to transfer
-to you; the allocator receives the amount he/she decides not to transfer and thus to keep.
-You do not make any decision. You simply receive the amount the allocator transferred to you.
+You have been randomly assigned the role of the <b>allocator</b>. The other person is in the role of the
+recipient.
+<br> <br>
+You are endowed with {{ C.ENDOWMENT }}, the recipient is endowed with nothing.
+<br> <br>
+You can decide how much of your {{ C.ENDOWMENT }} to transfer to the recipient. You can choose any
+amount between 0 and {{ C.ENDOWMENT }}. The recipient receives the amount that you decide to transfer to
+him/her while you receive the amount that you decide not to transfer and thus to keep.
 
 
-
-    {{ formfields }}
-    {{ next_button }}
-
-{{ endblock }}

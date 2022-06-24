@@ -1,4 +1,10 @@
 {{ block scripts }}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
+
+    <script src="{% static 'global/js/pie_chart.js' %}"></script>
 {{ endblock }}
 
 {{ block global_styles  }}
@@ -22,7 +28,7 @@
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow" data-toggle="tooltip" data-placement="bottom" title="Round {{ player.round_number }}">
-                Instructions
+                Results: {{ if player.round_number == C.NUM_ROUNDS}} Last period {{ else }} Period {{ player.round_number }} {{ endif }}
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -42,20 +48,15 @@
                 <!-- Decision Card -->
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
-                        This task is about dividing money between yourself and another person to whom you are randomly
-                        matched. You do not know this other person and you will not knowingly meet him/her.
-                        <br><br>
-                        The two of you will be randomly assigned two roles: Allocator and Recipient.
 
-                        <p class="lead mt-3 mb-0"> Scenario 1</p>
-                        <hr class="mt-0">
-                        {{ include C.ALLOCATOR_TEMPLATE }}
+                        Here comes a viz!
 
-                        <p class="lead mt-3 mb-0"> Scenario 2</p>
-                        <hr class="mt-0">
-                        {{ include C.RECIPIENT_TEMPLATE }}
+                        <figure class="highcharts-figure">
+                            <div id="container"></div>
+                            <p class="highcharts-description">
 
-                        {{ formfields }}
+                            </p>
+                        </figure>
 
                         <div class="d-flex justify-content-center m-5">
                             <button class="btn btn-primary shadow" type="submit" id="submitButton" style="border-radius: 40px;">
@@ -69,3 +70,4 @@
     </div>
 
 {{ endblock }}
+
