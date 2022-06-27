@@ -31,7 +31,8 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     share = models.IntegerField(doc="the share the dictator allocates to the recipient.",
                                 min=0,
-                                blank=True)
+                                blank=True,
+                                initial=0) # reconsider this part.
 
 # FUNCTIONS
 def creating_session(subsession):

@@ -1,7 +1,13 @@
 {{ block scripts }}
+{{ if group.voice_interface }}
+    {{if player.role == "Allocator"}}
+        <script src="{% static 'global/js/recorder.js' %}"></script>
+    {{ endif }}
+{{ endif }}
 {{ endblock }}
 
 {{ block global_styles  }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 <style>
     .otree-title {
         display: none;
@@ -49,6 +55,8 @@
 
 
                         {{ if player.role == "Allocator" }}
+                        {{ if group.voice_interface }}
+
                         <p class="card-text mb-1 text-secondary">
                             How much of your {{ C.ENDOWMENT }} do you want to transfer to the recipient?
                         </p>
@@ -56,7 +64,47 @@
                         <p class="mb-4 text-secondary">
                             <small>
                                 The recipient receives the amount that you decide to transfer to him/her while you
-                                receive the amount that you decide not to transfer and thus to keep
+                                receive the amount that you decide not to transfer and thus to keep.
+                            </small>
+                        </p>
+
+                        <small class="mb-4">
+                            <div class="display">
+                                <!-- Add Messages -->
+                            </div>
+                        </small>
+
+                        <div class="container-fluid p-0 m-0 mb-2">
+                            <div class="row align-items-center">
+                                <div class="col m-0">
+                                    <div class="controllers">
+                                        <!-- Start, stop, (download,) repeat -->
+                                    </div>
+                                </div>
+                                <div class="col m-0">
+                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();" disabled>
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <div class="replay mt-4">
+                                <!-- listen to audi tag -->
+                            </div>
+                        </div>
+
+                        {{ else }}
+
+                        <p class="card-text mb-1 text-secondary">
+                            How much of your {{ C.ENDOWMENT }} do you want to transfer to the recipient?
+                        </p>
+
+                        <p class="mb-4 text-secondary">
+                            <small>
+                                The recipient receives the amount that you decide to transfer to him/her while you
+                                receive the amount that you decide not to transfer and thus to keep.
                             </small>
                         </p>
 
@@ -66,22 +114,12 @@
                                     <input type="number" class="form-control m-0 border-primary" placeholder="" id="id_share" name="share" min="0" max="10" required>
                                 </div>
                                 <div class="col m-0">
-                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100" onclick="submitForm();">
-                                        Transfer
+                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();">
+                                        Submit
                                     </button>
                                 </div>
                             </div>
                         </div>
-
-                        {{ if group.voice_interface }}
-                            <div class="alert alert-warning d-flex align-items-center mt-4" role="alert">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                                </svg>
-                                <div class="ms-3">
-                                <b>Under construction:</b><br>There should be a voice interface in here.
-                                </div>
-                            </div>
                         {{ endif }}
 
                         {{ else }}
