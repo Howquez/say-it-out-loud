@@ -33,7 +33,7 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
             const blob = new Blob(chunks, {'type': 'audio/ogg; codecs=opus'})
             chunks = []
             audioURL = window.URL.createObjectURL(blob)
-            document.querySelector('audio').src = audioURL
+            // document.querySelector('audio').src = audioURL
 
         }
     }).catch(error => {
@@ -126,7 +126,7 @@ const application = (index) => {
             clearDisplay()
             recordings += 1
 
-            addAudio()
+            // addAudio()
             addMessage('Submit or record again saying "I want to transfer x point(s)."')
             // addButton('download', 'downloadAudio()', 'Dwnload Audio', "primary")
             addButton('record', 'voiceRecording()', 'Record Again', "success", "bi bi-arrow-repeat")
