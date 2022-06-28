@@ -1,9 +1,7 @@
 {{ block scripts }}
 <script src="{% static 'global/js/tech_covariates.js' %}"></script>
-{{ if group.voice_interface }}
-    {{if player.role == "Allocator"}}
-        <script src="{% static 'global/js/recorder.js' %}"></script>
-    {{ endif }}
+{{ if player.voice_interface }}
+    <script src="{% static 'global/js/recorder.js' %}"></script>
 {{ endif }}
 {{ endblock }}
 
@@ -15,6 +13,7 @@
         }
 </style>
 {{ endblock }}
+
 
 
 {{ block content }}
@@ -55,15 +54,7 @@
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
 
-                        <p class="h3">
-                            You are the {{player.role}}.
-                        </p>
-
-
-                        {{ if player.role == "Allocator" }}
-                        {{ if group.voice_interface }}
-
-                        <p class="card-text mb-1 text-secondary">
+                        <p class="card-text mb-1">
                             How much of your {{ C.ENDOWMENT }} do you want to transfer to the recipient?
                         </p>
 
@@ -74,74 +65,37 @@
                             </small>
                         </p>
 
-                        <small class="mb-4">
-                            <div class="display">
-                                <!-- Add Messages -->
-                            </div>
-                        </small>
+                        {{ if player.voice_interface }}
+                            <small class="mb-4">
+                                <div class="display">
+                                    <!-- Add Messages -->
+                                </div>
+                            </small>
 
-                        <div class="container-fluid p-0 m-0 mb-2">
-                            <div class="row align-items-center">
-                                <div class="col m-0">
-                                    <div class="controllers">
-                                        <!-- Start, stop, (download,) repeat -->
+                            <div class="container-fluid p-0 m-0 mb-2">
+                                <div class="row align-items-center">
+                                    <div class="col m-0">
+                                        <div class="controllers">
+                                            <!-- Start, stop, (download,) repeat -->
+                                        </div>
+                                    </div>
+
+                        {{ else }}
+                            <div class="container-fluid p-0 m-0">
+                                <div class="row align-items-center">
+                                    <div class="col m-0">
+                                        <input type="number" class="form-control m-0 border-primary" placeholder="" id="id_share" name="share" min="0" max="10" required>
+                                    </div>
+
+                        {{ endif }}
+                                    <div class="col m-0">
+                                        <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();">
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col m-0">
-                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();" disabled>
-                                        Submit
-                                    </button>
-                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-flex justify-content-center">
-                            <div class="replay mt-4">
-                                <!-- listen to audi tag -->
-                            </div>
-                        </div>
-
-                        {{ else }}
-
-                        <p class="card-text mb-1 text-secondary">
-                            How much of your {{ C.ENDOWMENT }} do you want to transfer to the recipient?
-                        </p>
-
-                        <p class="mb-4 text-secondary">
-                            <small>
-                                The recipient receives the amount that you decide to transfer to him/her while you
-                                receive the amount that you decide not to transfer and thus to keep.
-                            </small>
-                        </p>
-
-                        <div class="container-fluid p-0 m-0">
-                            <div class="row align-items-center">
-                                <div class="col m-0">
-                                    <input type="number" class="form-control m-0 border-primary" placeholder="" id="id_share" name="share" min="0" max="10" required>
-                                </div>
-                                <div class="col m-0">
-                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {{ endif }}
-
-                        {{ else }}
-
-                        <p class="card-text mb-4 text-secondary">
-                            You do not make any decision. You simply receive the amount the allocator transferred to you.
-                        </p>
-
-
-                        <div class="row justify-content-center">
-                            <button type="submit" class="btn btn-primary w-25">
-                                Ok, next.
-                            </button>
-                        </div>
-
-                        {{ endif }}
                     </div>
                 </div>
             </div>
@@ -156,12 +110,7 @@
         </div>
         <div class="offcanvas-body">
             <div>
-                {{ if player.role == "Recipient" }}
-                    {{ include C.RECIPIENT_TEMPLATE }}
-                {{ endif }}
-                {{ if player.role == "Allocator" }}
-                    {{ include C.ALLOCATOR_TEMPLATE }}
-                {{ endif }}
+                {{ include C.RULES_TEMPLATE }}
             </div>
 
         </div>

@@ -7,6 +7,12 @@ SESSION_CONFIGS = [
         app_sequence=["A_Intro", "B_Game", "C_Outro"],
         num_demo_participants=4,
     ),
+    dict(
+        name='slim',
+        display_name="Charity",
+        app_sequence=["D_Charity"],
+        num_demo_participants=3,
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs

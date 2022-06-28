@@ -1,0 +1,101 @@
+{{ block content }}
+<body class="bg-light.bg-gradient">
+<img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+    <!-- Decision Card -->
+    <div class="card mt-5 shadow-lg">
+        <div class="card-body">
+            <h1 class="display-4">Welcome!</h1>
+            <p class="lead">Thank you for your interest in this experiment.</p>
+
+            <table class="table mt-5 mb-5 table-responsive">
+                <tbody>
+                    <tr>
+                        <th scope="row">Study Name</th>
+                        <td>Two-Player-Game</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Study Duration</th>
+                        <td>
+                            Approximately 10 minutes: Reading the instructions takes about 5 minutes. Answering the
+                            questions takes another 5 minutes.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Payment</th>
+                        <td>
+                            {{ session.config.participation_fee }} as well as a bonus, the amount of which depends on
+                            your decisions.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Technical Requirements</th>
+                        <td>
+                            We will ask you to provide a voice input. For that reason, we require you to use a device
+                            with a microphone. Apart from that, there are no further requirements.
+                            The study works on both laptops, PCs and smartphones as well as tablets.
+                            For the smoothest possible process, we advise using a modern browser with a stable
+                            Internet connection.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            Privacy
+                        </th>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="GDPR" required>
+                                <label class="form-check-label" for="GDPR">
+                                    I agree to the anonymized analysis of my answers for the purpose of scientific
+                                    evaluation according to the
+                                    <a class="text-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasGDPR" id="gdpr_text" style="cursor: pointer;">
+                                        <u>privacy policy</u>
+                                    </a>.
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center m-5">
+                <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                    Start
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GDPR Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasGDPR" aria-labelledby="offcanvasGDPRLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasGDPRLabel">Datenschutzerklärung</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <small>
+                Within the scope of the study, great importance is attached to compliance with data protection regulations,
+                the protection of privacy and the confidentiality of the data. We strictly adhere to
+                all applicable laws and regulations on data protection With these notes we inform you
+                about the processing of your personal data and the rights to which you are entitled.
+                <br><br>
+            </small>
+
+            <h5>1. Investigator</h5>
+            <address>
+                Hauke Roggenkamp <br><br>
+                Institute of behavioral sciences and technology <br>
+                University of St. Gallen <br>
+                Grindelberg 5 <br>
+                9000 St. Gallen <br><br>
+                <a href="mailto:hauke.roggenkamp@unisg.ch?subject=CLICCS B5 Umfrage">hauke.roggenkamp@unisg.ch</a><br>
+                <a href="tel:+41712247709">+41 712247709</a>
+            </address>
+            <br><br>
+
+
+            <h5>...</h5>
+        </div>
+    </div>
+</body>
+{{ endblock }}
+

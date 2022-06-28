@@ -9,8 +9,8 @@ var recordings = 0
 
 // collect DOMs
 const display = document.querySelector('.display')
-const replay = document.querySelector('.replay')
 const controllerWrapper = document.querySelector('.controllers')
+// const replay = document.querySelector('.replay')
 
 const State = ['Initial', 'Record', 'Revision']
 let stateIndex = 0
@@ -46,7 +46,7 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
 
 const clearDisplay = () => {
     display.textContent = ''
-    replay.textContent = ''
+    // replay.textContent = ''
 }
 
 const clearControls = () => {
@@ -97,9 +97,9 @@ const addAudio = () => {
     note.textContent = "You can listen to your recording above to ensure a sufficient audioquality."
     note.className = "text-secondary mb-5"
     const lineBreak = document.createElement('br')
-    replay.append(audio)
-    replay.append(lineBreak)
-    replay.append(note)
+    // replay.append(audio)
+    // replay.append(lineBreak)
+    // replay.append(note)
 }
 
 const application = (index) => {
