@@ -2,7 +2,7 @@ console.log("pie chart ready!")
 
 
 // vars from oTree
-let dictators = js_vars.dictators;
+let dictators = Math.round(js_vars.dictators);
 let role = js_vars.role;
 
 // initiate variables
@@ -15,10 +15,10 @@ var pie;
 
 if(role=="Recipient"){
     red = dictators;
-    green = 100 -  red;
+    green = Math.round(100 - red);
 }else{
     green = dictators;
-    red = 100 - green;
+    red = Math.round(100 - green);
 }
 
 // set colors
