@@ -34,6 +34,13 @@ class Player(BasePlayer):
                                 blank=True,
                                 initial=0) # reconsider this part.
 
+    # technical covariates (or web tracking)
+    longitude = models.StringField(doc="the participant's location: longitude.", blank=True)
+    latitude  = models.StringField(doc="the participant's location: latitude.", blank=True)
+    width     = models.IntegerField(doc="the participant's screen width.", blank=True)
+    height    = models.IntegerField(doc="the participant's screen width.", blank=True)
+    devicePixelRatio = models.IntegerField(doc="the participant's ratio of pixel sizes.", blank=True)
+
 # FUNCTIONS
 def creating_session(subsession):
     import itertools
@@ -45,7 +52,8 @@ def creating_session(subsession):
 # PAGES
 class A_Decision(Page):
     form_model = "player"
-    form_fields = ["share"]
+    form_fields = ["share",
+                   "longitude", "latitude", "width", "height", "devicePixelRatio"]
 
     @staticmethod
     def vars_for_template(player: Player):

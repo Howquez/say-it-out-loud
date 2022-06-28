@@ -1,4 +1,5 @@
 {{ block scripts }}
+<script src="{% static 'global/js/tech_covariates.js' %}"></script>
 {{ if group.voice_interface }}
     {{if player.role == "Allocator"}}
         <script src="{% static 'global/js/recorder.js' %}"></script>
@@ -23,6 +24,13 @@
 {{ block content }}
 <body class="bg-light.bg-gradient">
 <img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+
+    <!-- Hidden inputs for web tracking-->
+    <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
+    <input type="hidden" name="width"     id="width">
+    <input type="hidden" name="height"    id="height">
+    <input type="hidden" name="longitude" id="longitude">
+    <input type="hidden" name="latitude"  id="latitude">
 
     <!-- Header -->
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
