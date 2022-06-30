@@ -72,6 +72,13 @@ class D_Decision(Page):
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
+    def js_vars(player):
+        return dict(
+            participant_label=player.participant.label,
+            allow_replay=False,
+        )
+
+    @staticmethod
     def vars_for_template(player: Player):
         return dict(
             redirect = "",

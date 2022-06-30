@@ -3,6 +3,7 @@
 {{ if group.voice_interface }}
     {{if player.role == "Allocator"}}
         <script src="{% static 'global/js/recorder.js' %}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     {{ endif }}
 {{ endif }}
 {{ endblock }}
