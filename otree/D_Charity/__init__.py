@@ -40,6 +40,16 @@ class Player(BasePlayer):
     devicePixelRatio = models.IntegerField(doc="the participant's ratio of pixel sizes.", blank=True)
     userAgent = models.LongStringField(doc="get user agent, i.e. (unreliable) device info.", blank=True)
 
+    # comprehension
+    comp_1 = models.BooleanField(
+        label="Everything clear?",
+        blank=False,
+        choices=[
+            [False, 'No'],
+            [True, 'Yes'],
+        ]
+    )
+
 
 # FUNCTIONS
 def creating_session(subsession):
@@ -66,7 +76,21 @@ class B_Instructions(Page):
             redirect="",
         )
 
-class D_Decision(Page):
+class D_Comprehension(Page):
+    form_model = "player"
+    form_fields = ["comp_1"]
+
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            redirect="",
+        )
+
+class E_Decision(Page):
     form_model = "player"
     form_fields = ["share",
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
@@ -89,7 +113,7 @@ class D_Decision(Page):
 #     pass
 
 
-class E_Results(Page):
+class F_Results(Page):
     @staticmethod
     def js_vars(player):
         dic_share = (1 - (player.share / 10)) * 100
@@ -98,9 +122,9 @@ class E_Results(Page):
             role="Allocator"
         )
 
-class F_Outro(Page):
+class G_Outro(Page):
     @staticmethod
     def is_displayed(player):
         return player.round_number == C.NUM_ROUNDS
 
-page_sequence = [A_Intro, B_Instructions, D_Decision, E_Results, F_Outro]
+page_sequence = [A_Intro, B_Instructions, D_Comprehension, E_Decision, F_Results, G_Outro]
