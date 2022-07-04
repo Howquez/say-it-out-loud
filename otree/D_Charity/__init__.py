@@ -26,11 +26,14 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     # treatment variable
     voice_interface = models.BooleanField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
+
     # primary outcome variable
     share = models.IntegerField(doc="the share the dictator allocates to the recipient.",
                                 min=0,
                                 blank=True,
                                 initial=0)  # reconsider this part.
+    voiceBase64 = models.LongStringField(doc="base64 encoded voice input.")
+
     # technical covariates (or web tracking)
     longitude = models.StringField(doc="the participant's location: longitude.", blank=True)
     latitude = models.StringField(doc="the participant's location: latitude.", blank=True)
@@ -92,7 +95,7 @@ class D_Comprehension(Page):
 
 class E_Decision(Page):
     form_model = "player"
-    form_fields = ["share",
+    form_fields = ["share", "voiceBase64",
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod

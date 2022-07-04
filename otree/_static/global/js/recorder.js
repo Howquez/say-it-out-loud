@@ -11,7 +11,8 @@ let participant_label = js_vars.participant_label;
 let allow_replay = false
 
 // initiate vars
-var recordings = 0
+var recordings = 0;
+var inputField = document.getElementById("voiceBase64")
 
 // collect DOMs
 const display = document.querySelector('.display')
@@ -44,6 +45,17 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
             if(allow_replay){
                 document.querySelector('audio').src = audioURL
                 }
+
+            // encode to base64 and
+            var reader = new window.FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function() {
+               base64 = reader.result;
+               base64 = base64.split(',')[1];
+               console.log(base64.substring(1, 42));
+               inputField.value = base64;
+               console.log("inputField " + inputField.value.substring(1, 42));
+            }
         }
 
 
@@ -53,24 +65,6 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
 }else{
     stateIndex = ''
     application(stateIndex)
-}
-
-// legacy: send data somewhere using jquery's ajax
-function sendAjax(data) {
-    var form = new FormData();
-    form.append('file', data, 'data.mp3');
-    form.append('title', 'data.mp3');
-    //Chrome inspector shows that the post data includes a file and a title.
-    $.ajax({
-        type: 'POST',
-        url: '/save-record',
-        data: form,
-        cache: false,
-        processData: false,
-        contentType: false
-    }).done(function(data) {
-        console.log(data);
-    });
 }
 
 
@@ -179,19 +173,4 @@ const application = (index) => {
 
 application(stateIndex)
 
-// submit audio
-function submitForm(){
-    console.log("send audio to server")
-    var filename = "haukesTest_" + participant_label + "_" + recordings
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function(e) {
-        if (this.readyState === 4) {
-            console.log("Server returned: ", e.target.responseText);
-        }
-    };
-    var fd = new FormData();
-    fd.append("audio_data", blob, filename);
-    xhr.open("POST", 'https://audio.virtulab.ch/upload.php', true);
-    xhr.send(fd);
-}
+
