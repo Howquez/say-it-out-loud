@@ -32,7 +32,8 @@ class Player(BasePlayer):
                                 min=0,
                                 blank=True,
                                 initial=0)  # reconsider this part.
-    voiceBase64 = models.LongStringField(doc="base64 encoded voice input.")
+    voiceBase64 = models.LongStringField(doc="base64 encoded voice input.",
+                                         blank=True)
 
     # technical covariates (or web tracking)
     longitude = models.StringField(doc="the participant's location: longitude.", blank=True)
@@ -130,4 +131,5 @@ class G_Outro(Page):
     def is_displayed(player):
         return player.round_number == C.NUM_ROUNDS
 
-page_sequence = [A_Intro, B_Instructions, D_Comprehension, E_Decision, F_Results, G_Outro]
+page_sequence = [A_Intro, B_Instructions, D_Comprehension, E_Decision, #F_Results,
+                 G_Outro]
