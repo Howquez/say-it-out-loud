@@ -24,6 +24,16 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=1.00, doc=""
 )
 
+
+ROOMS = [
+    dict(
+        name='Session_1',
+        display_name='Session 1',
+        participant_label_file='_rooms/Session_1.txt',
+        use_secure_urls=True
+    ),
+]
+
 PARTICIPANT_FIELDS = []
 SESSION_FIELDS = []
 
