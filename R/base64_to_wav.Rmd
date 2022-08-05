@@ -1,0 +1,90 @@
+---
+title: "Decode base64 strings to wav"
+description: |
+  Using either R or Python
+author:
+  - name: Hauke Roggenkamp 
+    url: https://www.ibt.unisg.ch/team/hauke-roggenkamp/
+    affiliation: Institute of Behavioral Science and Technology
+    affiliation_url: https://www.ibt.unisg.ch/
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+# Decoding
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(base64enc)
+library(data.table)
+library(reticulate)
+py_install("pandas")
+```
+
+## R
+
+```{r readData}
+dt <- data.table(read.csv(file = "../data/raw/all_apps_wide-2022-08-02.csv"))
+```
+
+
+```{r convertBase64}
+voiceInteractions <- dt[D_Charity.1.player.voice_interface == 1,
+                        participant.code]
+
+for(id in voiceInteractions){
+        dt[participant.code == id,
+           base64decode(what = D_Charity.1.player.voiceBase64,
+                        output = file(paste0("../data/wav/r_",
+                                             participant.code,
+                                             ".wav"),
+                                      "wb"))]
+}
+```
+
+## Python
+
+```{python}
+import pandas
+import base64
+
+df = pandas.read_csv("../data/raw/all_apps_wide-2022-08-02.csv")
+
+someLongString = df.loc[df.index[0], "D_Charity.1.player.voiceBase64"]
+participant = df.loc[df.index[0], "participant.code"]
+decode_string  = base64.b64decode(someLongString)
+file_name      = "../data/wav/py_{code}.wav"
+wav_file       = open(file_name.format(code = participant), "wb")
+wav_file.write(decode_string)
+
+# for id in df[df["D_Charity.1.player.voice_interface"] == 1]["participant.code"]:
+#         base64string = df[df["participant.code"] == id]["D_Charity.1.player.voiceBase64"]
+#         decode_string = base64.b64decode(base64string)
+#         file_name = "../data/wav/py_{code}.wav"
+#         wav_file = open(file_name.format(code = id), "wb")
+#         wav_file.write(decode_string)
+#         
+```
+
+# Speech to Text
+
+```{r}
+# install.packages("googleLanguageR")
+library(googleLanguageR)
+
+# use google's test audio
+test_audio <- system.file("woman1_wb.wav", package = "googleLanguageR")
+return <- gl_speech(test_audio)$transcript
+return$transcript
+
+# use my test audio
+test_audio <- system.file("data/wav/r_9gy8doqs.wav", package = "googleLanguageR")
+return <- gl_speech(audio_source = "../data/wav/r_nzdwr4z0.wav",
+                    sampleRateHertz = 48000L,
+                    languageCode = "de-DE",
+                    encoding = "LINEAR16")
+return$transcript
+
+```
+
