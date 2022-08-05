@@ -1,0 +1,73 @@
+---
+params:
+  N:
+    label: "Number of Participants"
+    value: 200
+    min: 0
+    step: 1
+    input: numeric
+  prefix:
+    label: "Add a prefix if needed."
+    value: ""
+    input: text
+  name:
+    label: "Name of the Room"
+    value: "Session_1"
+    input: text
+title: "Create Rooms for oTree Sessions"
+description: |
+author:
+  - name: Hauke Roggenkamp 
+    url: https://www.ibt.unisg.ch/team/hauke-roggenkamp/
+    affiliation: Institute of Behavioral Science and Technology
+    affiliation_url: https://www.ibt.unisg.ch/
+date: "`r Sys.Date()`"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(stringi)
+library(magrittr)
+library(data.table)
+library(knitr)
+set.seed(14)
+```
+
+This script writes some random tokens that can be used to generate persistent identifiers for  [ROOMS](https://otree.readthedocs.io/en/latest/rooms.html) in oTree. Defining these labels _ex ante_, helps you to match your IDs (the `participant.label`) with the IDs agencies (such as prolific, MTurk or others) provide. This matching procedure is necessary to administer the individual payoffs.
+
+```{r createRoom}
+strings <- paste0(params$prefix,
+                  stri_rand_strings(n = params$N,
+                                    length = 8,
+                                    pattern = "[A-Za-z0-9]")) %>%
+  data.table()
+
+path <- paste0("../otree/_rooms/", params$name, ".txt")
+
+write.table(strings,
+          file = path,
+          col.names = FALSE,
+          row.names = FALSE,
+          quote = FALSE)
+```
+
+
+This is what the first five `participant.label`s you just created look like.
+
+```{r showLables}
+setnames(x = strings,
+         new = params$name)
+
+kable(head(strings, 5))
+```
+
+You stored them in: ``r path`` 
+
+***
+
+_Note that this is a Rmd file you can knit with parameters. This will prompt a UI asking you for the number of participants, whether their labels should contain a custom prefix as well as the name of the room._
