@@ -47,7 +47,7 @@ class Player(BasePlayer):
     # comprehension
     comp_1 = models.BooleanField(
         label="Everything clear?",
-        blank=False,
+        blank=True,
         choices=[
             [False, 'No'],
             [True, 'Yes'],
@@ -89,6 +89,14 @@ class D_Comprehension(Page):
         return player.round_number == 1
 
     @staticmethod
+    def js_vars(player):
+        return dict(
+            participant_label=player.participant.label,
+            template="comprehension",
+            allow_replay=True,
+        )
+
+    @staticmethod
     def vars_for_template(player: Player):
         return dict(
             redirect="",
@@ -103,6 +111,7 @@ class E_Decision(Page):
     def js_vars(player):
         return dict(
             participant_label=player.participant.label,
+            template="decision",
             allow_replay=False,
         )
 

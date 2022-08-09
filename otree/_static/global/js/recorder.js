@@ -1,4 +1,5 @@
 console.log("recorder ready!")
+
 // Sources: https://towardsdev.com/capture-audio-in-browser-with-javascript-27d83ec9aa67
 // and      https://github.com/duketemon/web-speech-recorder/blob/master/source/static/index.html
 
@@ -8,20 +9,30 @@ console.log("recorder ready!")
 
 // vars from oTree
 let participant_label = js_vars.participant_label;
-let allow_replay = false
+let template = js_vars.template;
+let allow_replay = js_vars.allow_replay;
 
 // initiate vars
 var recordings = 0;
 var inputField = document.getElementById("voiceBase64")
+var message = ' "I want to transfer x point(s)."'
 
 // collect DOMs
 const display = document.querySelector('.display')
 const controllerWrapper = document.querySelector('.controllers')
-// const replay = document.querySelector('.replay')
+const replay = document.querySelector('.replay')
 
 const State = ['Initial', 'Record', 'Revision']
 let stateIndex = 0
 let mediaRecorder, chunks = [], audioURL = '', blob
+
+// template specifics (comprehension vs decision screen)
+if(template == "comprehension"){
+    message = ' "I have read and understand the instructions."'
+    inputField = document.getElementById("comprehensionAudio")
+}
+
+
 
 // mediaRecorder setup for audio
 if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
@@ -30,7 +41,10 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
     navigator.mediaDevices.getUserMedia({
         audio: true
     }).then(stream => {
-        mediaRecorder = new MediaRecorder(stream)
+        // see for more options: https://stackoverflow.com/a/53597051
+        mediaRecorder = new MediaRecorder(stream, {
+            type: "audio"
+        })
 
         mediaRecorder.ondataavailable = (e) => {
             chunks.push(e.data)
@@ -38,7 +52,8 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
 
         mediaRecorder.onstop = () => {
             // const blob = new Blob(chunks, {'type': 'audio/ogg; codecs=opus'})
-            blob = new Blob(chunks, {type: 'audio/mpeg-3'});
+            // blob = new Blob(chunks, {type: 'audio/mpeg-3'});
+            blob = new Blob(chunks, {type: 'audio/wav; codecs=0'});
             chunks = []
             audioURL = window.URL.createObjectURL(blob)
             // sendData(blob);
@@ -71,7 +86,9 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
 // frontend operations
 const clearDisplay = () => {
     display.textContent = ''
-    if(allow_replay){replay.textContent = ''}
+    if(allow_replay){
+        replay.textContent = ''
+        }
 }
 
 const clearControls = () => {
@@ -110,7 +127,7 @@ const addButton = (id, funString, text, color, icon) => {
 const addMessage = (text) => {
     const msg = document.createElement('p')
     msg.textContent = text
-    msg.className = "text-secondary"
+    msg.className = "text-dark"
     display.append(msg)
 }
 
@@ -118,14 +135,10 @@ const addAudio = () => {
     const audio = document.createElement('audio')
     audio.controls = true
     audio.src = audioURL
-    const note = document.createElement('small')
-    note.textContent = "You can listen to your recording above to ensure a sufficient audioquality."
-    note.className = "text-secondary mb-5"
-    const lineBreak = document.createElement('br')
+    audio.className = "mt-3"
+
     if(allow_replay){
         replay.append(audio)
-        replay.append(lineBreak)
-        replay.append(note)
     }
 }
 
@@ -135,7 +148,7 @@ const application = (index) => {
             clearDisplay()
             clearControls()
 
-            addMessage('Press the left button to start recording your decision and say "I want to transfer x point(s)."')
+            addMessage('Press the left button to start recording your decision and say' + message)
             addButton('record', 'voiceRecording()', 'Start Recording', "success") //, "bi bi-record-fill")
             document.getElementById("submit_button").disabled = true;
             break;
@@ -146,6 +159,7 @@ const application = (index) => {
 
             addMessage('Recording...')
             addButton('stop', 'stopRecording()', 'Stop Recording', "danger", "bi bi-stop-fill")
+
             document.getElementById("submit_button").disabled = true;
             break
 
@@ -155,10 +169,12 @@ const application = (index) => {
             recordings += 1
 
             if(allow_replay){addAudio()};
-            addMessage('Submit or record again saying "I want to transfer x point(s)."')
-            // addButton('download', 'downloadAudio()', 'Dwnload Audio', "primary")
+            addMessage('Submit or record again saying' + message)
+            // addButton('download', 'downloadAudio()', 'Download Audio', "primary")
             addButton('record', 'voiceRecording()', 'Record Again', "success", "bi bi-arrow-repeat")
             document.getElementById("submit_button").disabled = false;
+            document.getElementById("alertMessage").innerHTML = "You can listen to your recording below to ensure a sufficient audio quality."
+            document.getElementById("reviewAlert").className = "alert alert-primary"
             break
 
         default:

@@ -1,5 +1,6 @@
 {{ block scripts }}
-<script src="{% static 'global/js/tech_covariates.js' %}"></script>
+    <script src="{% static 'global/js/tech_covariates.js' %}"></script>
+    <script src="{% static 'global/js/recorder.js' %}"></script>
 {{ endblock }}
 
 {{ block global_styles  }}
@@ -25,6 +26,8 @@
     <input type="hidden" name="latitude"  id="latitude">
     <input type="hidden" name="userAgent" id="userAgent">
     <input type="hidden" name="ipAddress" id="ipAddress">
+    <!-- Hidden inputs for voice interface -->
+    <input type="hidden" name="comprehensionAudio" id="comprehensionAudio">
 
     <!-- Header -->
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
@@ -51,24 +54,60 @@
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
 
-                        <p class="card-text mb-1">
-                            There will be some comprehension questions as well as a mic check.
+                        <p class="mb-4 text-secondary">
+                            <small>
+                                Feel free to read through the instructions by clicking on the
+                                <i class="bi bi-info-circle-fill text-dark"  style="cursor: pointer;"
+                                   data-bs-toggle="offcanvas" data-bs-target="#offcanvasInstructions"
+                                   aria-controls="offcanvasInstructions"></i>-icon.
+                            </small>
                         </p>
 
                         <p class="mb-4 text-secondary">
                             <small>
-                                Feel free to read through the instructions by clicking on the
-                                <i class="bi bi-info-circle-fill"></i>-icon.
+                                Please confirm that you have read and understand the instructions by recording the
+                                following sentence using the button below.
                             </small>
                         </p>
 
-                        {{ formfields }}
+                        <small class="mb-4">
+                            <div class="display">
+                                <!-- Add Messages -->
+                            </div>
+                        </small>
 
-                        <div class="d-flex justify-content-center m-3">
-                            <button class="btn btn-primary shadow" type="submit" id="submitButton">
-                                Let's Go!
-                            </button>
+                        <div class="container-fluid p-0 m-0 mb-3">
+                            <div class="row align-items-center">
+                                <div class="col m-0">
+                                    <div class="controllers">
+                                        <!-- Start, stop, (download,) repeat -->
+                                    </div>
+                                </div>
+                                <div class="col m-0">
+                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+
+                        <div id="reviewAlert" class="alert alert-warning" role="alert">
+                            <small>
+                                <em id="alertMessage">
+                                    Make sure that the audio works and is clearly hearable and understandable.
+                                    <strong>You cannot be paid, if this is not the case.</strong>
+                                </em>
+                            </small>
+                            <div class="replay">
+                                <!-- replay -->
+                            </div>
+                        </div>
+
+
+
+                        <!--
+                        {{ formfields }}
+                        -->
                     </div>
                 </div>
             </div>
