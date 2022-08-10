@@ -10,6 +10,8 @@ output: github_document # distill::distill_article
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+***
+
 This document belongs to a [project](https://github.com/Howquez/say-it-out-loud) in which participants of an experiment receive an endowment and can decide whether and how much the want to donate to some charity.
 
 Importantly, participants encounter one of two interfaces to communicate their decision: They either type their decision using a classic text input or they make a voice recording that we analyze using a speech-to-text engine. Which type of interface a participant encounters is determined randomly.
@@ -18,16 +20,31 @@ You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
 
 ***
 
+# Workflow
+
+1. Run [oTree Experiment](https://ibt-hsg.herokuapp.com/demo) and download the resulting .csv file.
+2. Run these lines of code. They will:
+    + decode a Base64 string to a .wav file and store it
+    + pass these files to a speech-to-text API (Google)
+    + extract the quantities from Google's text output
+    
+
 # Setup
 
-```{r packages}
+```{r packages, warning = FALSE}
 # install this package once, it'll then install and load all remaining packages
 # install.packages("pacman")
 
-pacman::p_load(rmarkdown, knitr, magrittr, data.table, stringr, lubridate, base64enc)
+pacman::p_load(rmarkdown, knitr, magrittr, data.table, stringr, lubridate, 
+               base64enc, googleLanguageR)
+
+# unfortunately, there is one github project we need where the repository's
+# name does not match the package's name.
+pacman::p_load_gh("fsingletonthorn/words_to_numbers")
+library(wordstonumbers)
 ```
 
-After installing and loading the packages, the data is loaded and stored as a `data.table`.^[According to the authors, `data.table` provides an enhanced version of `data.frame`s that reduce programming and compute time tremendously.] Some of the columns^[Such as `D_Charity.1.player.voiceBase64`, for instance.] contain `base64` strings that can be converted to audio files using the `base64enc` package.
+After installing and loading the packages, the data is loaded and stored as a `data.table`.^[According to the authors, `data.table` provides an enhanced version of `data.frame`s that reduce programming and compute time tremendously.]
 
 ```{r mostRecentData}
 # find most recent file in directory
@@ -39,14 +56,14 @@ recentCSV <- cFiles[cFiles$mtime == max(cFiles$mtime), ] %>% row.names()
 rm("cFiles")
 ```
 
-This implies that we only need these lines of code as well as a single .csv file (in this case ` `r recentCSV` `^[This is the most recent data we have.]) to create and analyze the audio files we are interested in.
+Some of the columns contain `base64`-encoded strings that can be decoded to audio files using the `base64enc` package. This implies that we only need these lines of code as well as a single .csv file (in this case ` `r recentCSV` `^[This is the most recent data we have.]) to create and analyze the audio files we are interested in.
 
 ```{r readData}
 # read data
 dt <- data.table(read.csv(file = recentCSV))
 ```
 
-The data looks approximately^[I changed the columns' order and truncated the long strings for illustrative purposes.] as follows: There are some unique IDs for each participant, a page index, two long strings containing the base64 encoded information and a numeric `share` variable describing contributions made to the charity, as well as many more columns that are not displayed in what follows.
+The data looks approximately^[I changed the order of some selected columns and truncated the long strings for illustrative purposes.] as follows: There are some unique IDs for each participant, a page index, two long strings containing the base64 encoded information and a numeric `share` variable describing contributions made to the charity, as well as many more columns that are not displayed in what follows.
 
 Importantly, there is also a treatment variable called `D_Charity.1.player.voice_interface`. This variable determines whether `D_Charity.1.player.share` or `D_Charity.1.player.voiceBase64` is populated since it describes whether participants face a voice interface or a classic numeric text input.
 
@@ -87,14 +104,27 @@ for(id in voiceInteractions){
 
 # Speech to Text
 
-```{r}
-library(googleLanguageR)
+To use the voice data, I am using the `googleLanguageR` package and its `gl_speech()` function. This requires you to [authenticate](#authentication). Subsequently, the text is [transcribed](#transcription) which allows us to [detect](#detection) the amount of money participants want to donate.
+
+## Authentication
+
+To use that function, you need to authenticate. Click [here](https://bookdown.org/paul/apis_for_social_scientists/google-speech-to-text-api.html#prerequisites-8) to find out how.
+
+I stored my key in a JSON file and read it via `gl_auth()`. You have to enter the path to your personal key to run the next few lines.
+
+```{r auth}
 gl_auth("../../../ibtanalytics-0ba5cc05ef54.json")
 ```
 
-```{r, eval = FALSE}
-dt[, speech2text := as.character("")]
+## Trasincription
 
+Having done so, I create an empty character vector `speech` that will be populated using a for loop that calls `gl_speech()`.
+
+```{r gl_speech, eval = TRUE}
+# initiate empty vector
+dt[, speech := as.character("")]
+
+# populate vektor in for loop
 for(file in dt[!is.na(fileNames), fileNames]){
         tmp <- gl_speech(audio_source = file, 
                          languageCode = "en", 
@@ -105,9 +135,41 @@ for(file in dt[!is.na(fileNames), fileNames]){
         transcript <- tmp$transcript[,1]
         
         dt[fileNames == file,
-           # class(speech2text)]
-           speech2text := transcript]
+           speech := transcript]
 }
 
-dt$speech2text
+# display vector
+kable(dt[,.(speech)])
 ```
+
+## Detection
+
+To extract the quantities described in the  `speech` vector, one can use the `wordstonumbers` package and apply the corresponding function (`words_to_numbers`) to it. As this just replaces the spelled number with a digit, one also has to remove all the characters from the respective strings. I do so, and write the result as a numeric into a variable called `speech2text`. 
+
+```{r speech2text}
+speechtotext <- apply(X = dt[,.(speech)],
+                      MARGIN = 1,
+                      FUN = words_to_numbers) %>%
+        str_replace_all(pattern = "\\D",
+                        replacement = "") %>%
+        as.numeric()
+
+dt[, speech2text := speechtotext]
+```
+
+Ultimately, this variable can be blended with `D_Charity.1.player.share`, such that we have one column that contains the donations of all participants. This variable, I call this variable `donation`, is our primary outcome. We expect it to differ between the two treatments.^[To put it differently, `speech2text` and `D_Charity.1.player.share` should differ.]
+
+```{r createOutcome}
+# create donation variable
+dt[, donation := D_Charity.1.player.share]
+dt[!is.na(speech2text), donation := speech2text]
+
+# display outcomes
+dt[,
+   .(participant.code,
+     D_Charity.1.player.voice_interface,
+     D_Charity.1.player.share,
+     speech2text,
+     donation)] %>% kable()
+```
+
