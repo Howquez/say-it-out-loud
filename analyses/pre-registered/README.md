@@ -3,6 +3,14 @@ Pre-processing
 Hauke Roggenkamp \|
 2022-08-10
 
+-   <a href="#workflow" id="toc-workflow">Workflow</a>
+-   <a href="#setup" id="toc-setup">Setup</a>
+-   <a href="#decode" id="toc-decode">Decode</a>
+-   <a href="#speech-to-text" id="toc-speech-to-text">Speech to Text</a>
+    -   <a href="#authentication" id="toc-authentication">Authentication</a>
+    -   <a href="#trasincription" id="toc-trasincription">Trasincription</a>
+    -   <a href="#detection" id="toc-detection">Detection</a>
+
 ------------------------------------------------------------------------
 
 This document belongs to a
@@ -175,15 +183,15 @@ for(file in dt[!is.na(fileNames), fileNames]){
 }
 ```
 
-    ## 2022-08-10 15:25:18 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:47:07 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:25:19 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:47:08 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:25:20 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:47:09 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:25:21 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:47:10 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:25:22 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:47:11 -- Speech transcription finished. Total billed time: 15s
 
 ``` r
 # display vector
@@ -204,7 +212,7 @@ kable(dt[,.(speech)])
 |                            |
 
 The quality of the transcription is rather bad, but good enough as each
-of the numbers contained are correct. To listen to the corresponding
+of the numbers contained is correct. To listen to the corresponding
 audio files, you have to browse to `../../data/wav/`. The original text
 of the first three entries were *I transfer \[1, 3, 6\] point(s)*. The
 last two entries should read *I donate \[7, 9\] points*.
