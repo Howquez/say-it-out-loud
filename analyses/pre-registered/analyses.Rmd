@@ -141,12 +141,15 @@ for(file in dt[!is.na(fileNames), fileNames]){
 # display vector
 kable(dt[,.(speech)])
 ```
+The quality of the transcription is rather bad, but good enough as each of the numbers contained are correct. To listen to the corresponding audio files, you have to browse to `../../data/wav/`. The original text of the first three entries were _I transfer [1, 3, 6] point(s)_. The last two entries should read _I donate [7, 9] points_.
 
 ## Detection
 
 To extract the quantities described in the  `speech` vector, one can use the `wordstonumbers` package and apply the corresponding function (`words_to_numbers`) to it. As this just replaces the spelled number with a digit, one also has to remove all the characters from the respective strings. I do so, and write the result as a numeric into a variable called `speech2text`. 
 
-```{r speech2text}
+**Note** that for each of these transcriptions, Google bills 15s.^[Also note that you have a free monthly contigent of 60 minutes.]
+
+```{r speech2text, warning = FALSE}
 speechtotext <- apply(X = dt[,.(speech)],
                       MARGIN = 1,
                       FUN = words_to_numbers) %>%

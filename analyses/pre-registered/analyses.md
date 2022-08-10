@@ -175,15 +175,15 @@ for(file in dt[!is.na(fileNames), fileNames]){
 }
 ```
 
-    ## 2022-08-10 15:17:45 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:25:18 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:17:46 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:25:19 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:17:47 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:25:20 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:17:48 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:25:21 -- Speech transcription finished. Total billed time: 15s
 
-    ## 2022-08-10 15:17:49 -- Speech transcription finished. Total billed time: 15s
+    ## 2022-08-10 15:25:22 -- Speech transcription finished. Total billed time: 15s
 
 ``` r
 # display vector
@@ -203,6 +203,12 @@ kable(dt[,.(speech)])
 | I don’t even nine euros    |
 |                            |
 
+The quality of the transcription is rather bad, but good enough as each
+of the numbers contained are correct. To listen to the corresponding
+audio files, you have to browse to `../../data/wav/`. The original text
+of the first three entries were *I transfer \[1, 3, 6\] point(s)*. The
+last two entries should read *I donate \[7, 9\] points*.
+
 ## Detection
 
 To extract the quantities described in the `speech` vector, one can use
@@ -211,6 +217,8 @@ the `wordstonumbers` package and apply the corresponding function
 with a digit, one also has to remove all the characters from the
 respective strings. I do so, and write the result as a numeric into a
 variable called `speech2text`.
+
+**Note** that for each of these transcriptions, Google bills 15s.[^4]
 
 ``` r
 speechtotext <- apply(X = dt[,.(speech)],
@@ -227,7 +235,7 @@ Ultimately, this variable can be blended with
 `D_Charity.1.player.share`, such that we have one column that contains
 the donations of all participants. This variable, I call this variable
 `donation`, is our primary outcome. We expect it to differ between the
-two treatments.[^4]
+two treatments.[^5]
 
 ``` r
 # create donation variable
@@ -265,5 +273,7 @@ dt[,
 [^3]: I changed the order of some selected columns and truncated the
     long strings for illustrative purposes.
 
-[^4]: To put it differently, `speech2text` and
+[^4]: Also note that you have a free monthly contigent of 60 minutes.
+
+[^5]: To put it differently, `speech2text` and
     `D_Charity.1.player.share` should differ.
