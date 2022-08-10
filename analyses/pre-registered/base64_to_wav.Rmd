@@ -18,14 +18,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(base64enc)
 library(data.table)
+library(stringr)
 library(reticulate)
-py_install("pandas")
 ```
 
 ## R
 
 ```{r readData}
-dt <- data.table(read.csv(file = "../data/raw/all_apps_wide-2022-08-02.csv"))
+dt <- data.table(read.csv(file = "../../data/raw/all_apps_wide-2022-08-10.csv"))
 ```
 
 
@@ -33,10 +33,15 @@ dt <- data.table(read.csv(file = "../data/raw/all_apps_wide-2022-08-02.csv"))
 voiceInteractions <- dt[D_Charity.1.player.voice_interface == 1,
                         participant.code]
 
+dt[D_Charity.1.player.voice_interface == 1,
+   fileNames := paste0("../../data/wav/r_",
+                       participant.code,
+                       ".wav")]
+
 for(id in voiceInteractions){
         dt[participant.code == id,
            base64decode(what = D_Charity.1.player.voiceBase64,
-                        output = file(paste0("../data/wav/r_",
+                        output = file(paste0("../../data/wav/r_",
                                              participant.code,
                                              ".wav"),
                                       "wb"))]
@@ -45,7 +50,9 @@ for(id in voiceInteractions){
 
 ## Python
 
-```{python}
+```{python, eval = FALSE}
+py_install("pandas")
+
 import pandas
 import base64
 
@@ -72,15 +79,38 @@ wav_file.write(decode_string)
 ```{r}
 # install.packages("googleLanguageR")
 library(googleLanguageR)
+gl_auth("../../../ibtanalytics-0ba5cc05ef54.json")
+```
 
+```{r}
+dt[, speech2text := as.character("")]
+
+for(file in dt[!is.na(fileNames), fileNames]){
+        tmp <- gl_speech(audio_source = file, 
+                         languageCode = "en", 
+                         encoding = "FLAC", 
+                         sampleRateHertz = 44100, 
+                         customConfig = list('audio_channel_count' = 1))
+        
+        transcript <- tmp$transcript[,1]
+        
+        dt[fileNames == file,
+           # class(speech2text)]
+           speech2text := transcript]
+}
+
+dt$speech2text
+```
+
+```{r eval = FALSE}
 # use google's test audio
 test_audio <- system.file("woman1_wb.wav", package = "googleLanguageR")
-return <- gl_speech(test_audio)$transcript
+return <- gl_speech(test_audio)
 return$transcript
 
 # use my test audio
-test_audio <- system.file("data/wav/r_9gy8doqs.wav", package = "googleLanguageR")
-return <- gl_speech(audio_source = "../data/wav/r_nzdwr4z0.wav",
+# test_audio <- system.file("data/wav/r_9gy8doqs.wav", package = "googleLanguageR")
+return <- gl_speech(audio_source = "../../data/wav/r_nzdwr4z0.wav",
                     sampleRateHertz = 48000L,
                     languageCode = "de-DE",
                     encoding = "LINEAR16")

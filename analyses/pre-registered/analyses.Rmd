@@ -1,0 +1,113 @@
+---
+title: "Pre-processing"
+author: Hauke Roggenkamp | 
+date: "`r Sys.Date()`"
+output: github_document # distill::distill_article
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This document belongs to a [project](https://github.com/Howquez/say-it-out-loud) in which participants of an experiment receive an endowment and can decide whether and how much the want to donate to some charity.
+
+Importantly, participants encounter one of two interfaces to communicate their decision: They either type their decision using a classic text input or they make a voice recording that we analyze using a speech-to-text engine. Which type of interface a participant encounters is determined randomly.
+
+You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
+
+***
+
+# Setup
+
+```{r packages}
+# install this package once, it'll then install and load all remaining packages
+# install.packages("pacman")
+
+pacman::p_load(rmarkdown, knitr, magrittr, data.table, stringr, lubridate, base64enc)
+```
+
+After installing and loading the packages, the data is loaded and stored as a `data.table`.^[According to the authors, `data.table` provides an enhanced version of `data.frame`s that reduce programming and compute time tremendously.] Some of the columns^[Such as `D_Charity.1.player.voiceBase64`, for instance.] contain `base64` strings that can be converted to audio files using the `base64enc` package.
+
+```{r mostRecentData}
+# find most recent file in directory
+cFiles <- file.info(list.files(path = "../../data/raw",
+                               full.names = TRUE,
+                               pattern = ".csv$"),
+                    extra_cols = FALSE)
+recentCSV <- cFiles[cFiles$mtime == max(cFiles$mtime), ] %>% row.names()
+rm("cFiles")
+```
+
+This implies that we only need these lines of code as well as a single .csv file (in this case ` `r recentCSV` `^[This is the most recent data we have.]) to create and analyze the audio files we are interested in.
+
+```{r readData}
+# read data
+dt <- data.table(read.csv(file = recentCSV))
+```
+
+The data looks approximately^[I changed the columns' order and truncated the long strings for illustrative purposes.] as follows: There are some unique IDs for each participant, a page index, two long strings containing the base64 encoded information and a numeric `share` variable describing contributions made to the charity, as well as many more columns that are not displayed in what follows.
+
+Importantly, there is also a treatment variable called `D_Charity.1.player.voice_interface`. This variable determines whether `D_Charity.1.player.share` or `D_Charity.1.player.voiceBase64` is populated since it describes whether participants face a voice interface or a classic numeric text input.
+
+```{r displayData}
+# display relevant columns
+dt[, .(participant.id_in_session, participant.code, participant._index_in_pages,
+       D_Charity.1.player.voice_interface,
+       D_Charity.1.player.comprehensionAudio = D_Charity.1.player.comprehensionAudio %>% str_sub(1500, 1575) %>% paste0("..."),
+       D_Charity.1.player.voiceBase64 = D_Charity.1.player.voiceBase64 %>% str_sub(1500, 1575),
+       D_Charity.1.player.share)] %>%
+        kable()
+```
+
+# Decode
+
+The following lines document a for loop that decodes the relevant rows of `D_Charity.1.player.voiceBase64` and stores the result in `../../data/wav/`.
+
+```{r convertBase64}
+# create filenames for the wav files that will be generated using a for loop
+dt[D_Charity.1.player.voice_interface == 1,
+   fileNames := paste0("../../data/wav/",
+                       participant.code,
+                       ".wav")]
+
+# create a vector of "treated" participants to loop over
+voiceInteractions <- dt[D_Charity.1.player.voice_interface == 1,
+                        participant.code]
+
+# run loop to decode and store corresponding files
+for(id in voiceInteractions){
+        dt[participant.code == id,
+           base64decode(what = D_Charity.1.player.voiceBase64,
+                        output = file(fileNames,
+                                      "wb"))]
+}
+```
+
+
+# Speech to Text
+
+```{r}
+library(googleLanguageR)
+gl_auth("../../../ibtanalytics-0ba5cc05ef54.json")
+```
+
+```{r, eval = FALSE}
+dt[, speech2text := as.character("")]
+
+for(file in dt[!is.na(fileNames), fileNames]){
+        tmp <- gl_speech(audio_source = file, 
+                         languageCode = "en", 
+                         encoding = "FLAC", 
+                         sampleRateHertz = 44100, 
+                         customConfig = list('audio_channel_count' = 1))
+        
+        transcript <- tmp$transcript[,1]
+        
+        dt[fileNames == file,
+           # class(speech2text)]
+           speech2text := transcript]
+}
+
+dt$speech2text
+```
