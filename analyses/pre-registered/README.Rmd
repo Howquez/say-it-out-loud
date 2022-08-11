@@ -4,8 +4,8 @@ author: Hauke Roggenkamp |
 date: "`r Sys.Date()`"
 output:
   github_document:
-    toc: true
-    toc_depth: 2 
+    toc: false
+    toc_depth: 1 
 # distill::distill_article
 ---
 
@@ -13,7 +13,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-***
+
+# Background
 
 This document belongs to a [project](https://github.com/Howquez/say-it-out-loud) in which participants of an experiment receive an endowment and can decide whether and how much the want to donate to some charity.
 
@@ -21,15 +22,17 @@ Importantly, participants encounter one of two interfaces to communicate their d
 
 You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
 
-***
+**Read further if you want to learn how Base64 strings (stemming from recorded voice) is decoded to audio files and then converted to text which is then converted to numeric information.**
+
+
 
 # Workflow
 
 1. Run [oTree Experiment](https://ibt-hsg.herokuapp.com/demo) and download the resulting .csv file.
 2. Run these lines of code. They will:
-    + decode a Base64 string to a .wav file and store it
-    + pass these files to a speech-to-text API (Google)
-    + extract the quantities from Google's text output
+    + [decode](#decode) a Base64 string to a .wav file and store it
+    + pass these files to a [speech-to-text](#speech-to-text) API (Google)
+3. [extract the quantities](#words-to-numbers) from Google's text output
     
 
 # Setup
@@ -80,28 +83,74 @@ dt[, .(participant.id_in_session, participant.code, participant._index_in_pages,
         kable()
 ```
 
+Because the data table is wide (there are `r NCOL(dt)` columns and `r NROW(dt)` rows), variables, that are measured multiple times, are arranged in separate columns. I rearrange it using `melt()`. I then select columns that change over time.
+
+```{r wide2long, warning = FALSE}
+# melt, i.e. create long data table
+tmp <- melt(data = dt,
+            measure = patterns("share$", "voiceBase64$", "comprehensionAudio$"),
+            value.name = c("share", "voiceBase64", "baselineBase64"),
+            variable.name = "round")
+
+# select ID columns as well as columns that represent variables of interest
+long <- tmp[,
+            .(session.code,
+              participant.code,
+              participant.label,
+              round,
+              voiceInterface = D_Charity.1.player.voice_interface,
+              share,
+              voiceBase64,
+              baselineBase64)]
+
+```
+
+This leaves us with da data.table that has only `r NCOL(long)` columns (and `r NROW(long)` rows) which is more handy to analyze.
+
+Note that I also renamed the variables along the way.^[In a long format, the variables do not correspond to observations in a specific period, which is one of the reasons I can truncate the columns' naming considerably.]
+
+
 # Decode
 
-The following lines document a for loop that decodes the relevant rows of `D_Charity.1.player.voiceBase64` and stores the result in `../../data/wav/`.
+The following lines document a for loop that decodes the relevant rows of `voiceBase64` and stores the result in `../../data/wav/`.
 
 ```{r convertBase64}
-# create filenames for the wav files that will be generated using a for loop
-dt[D_Charity.1.player.voice_interface == 1,
-   fileNames := paste0("../../data/wav/",
+# create file names for the wav files that will be generated using a for loop
+long[voiceInterface == 1,
+   decisionFilePath := paste0("../../data/wav/",
                        participant.code,
+                       "_desicion", # to distinguish between decisions and the baseline
+                       round,
                        ".wav")]
 
-# create a vector of "treated" participants to loop over
-voiceInteractions <- dt[D_Charity.1.player.voice_interface == 1,
-                        participant.code]
+long[!is.na(baselineBase64),
+   baselineFilePath := paste0("../../data/wav/",
+                       participant.code,
+                       "_baseline", # to distinguish between decisions and the baseline
+                       ".wav")]
+
+# create a vector of "speaking" decisions to loop over
+spokenDecisions <- long[!is.na(decisionFilePath) & !is.na(voiceBase64),
+                          decisionFilePath]
 
 # run loop to decode and store corresponding files
-for(id in voiceInteractions){
-        dt[participant.code == id,
-           base64decode(what = D_Charity.1.player.voiceBase64,
-                        output = file(fileNames,
+for(file in spokenDecisions){
+        long[decisionFilePath == file,
+           base64decode(what = voiceBase64,
+                        output = file(decisionFilePath,
                                       "wb"))]
 }
+
+# repeat the last two steps for baseline audios
+baselines <- long[!is.na(baselineBase64), baselineFilePath]
+rm(file)
+for(file in baselines){
+        long[baselineFilePath == file,
+           base64decode(what = baselineBase64,
+                        output = file(baselineFilePath,
+                                      "wb"))]
+}
+
 ```
 
 
@@ -121,14 +170,16 @@ gl_auth("../../../ibtanalytics-0ba5cc05ef54.json")
 
 ## Trasincription
 
-Having done so, I create an empty character vector `speech` that will be populated using a for loop that calls `gl_speech()`.
+### Decision Data
 
-```{r gl_speech, eval = TRUE}
+Having done so, I create an empty character vector `spokenDecision` that will be populated using a for loop that calls `gl_speech()`.
+
+```{r gl_speech_1, eval = TRUE}
 # initiate empty vector
-dt[, speech := as.character("")]
+long[, spokenDecision := as.character("")]
 
-# populate vektor in for loop
-for(file in dt[!is.na(fileNames), fileNames]){
+# populate vector in for loop
+for(file in spokenDecisions){ # note that there is a difference between spokenDecisions & spokenDecision
         tmp <- gl_speech(audio_source = file, 
                          languageCode = "en", 
                          encoding = "FLAC", 
@@ -137,46 +188,118 @@ for(file in dt[!is.na(fileNames), fileNames]){
         
         transcript <- tmp$transcript[,1]
         
-        dt[fileNames == file,
-           speech := transcript]
+        long[decisionFilePath == file,
+           spokenDecision := transcript]
 }
 
 # display vector
-kable(dt[,.(speech)])
+kable(long[!is.na(voiceBase64),
+           .(spokenDecision)])
 ```
 
 The quality of the transcription is rather bad, but good enough as each of the numbers contained is correct. To listen to the corresponding audio files, you have to browse to `../../data/wav/`. The original text of the first three entries were _I transfer [1, 3, 6] point(s)_. The last two entries should read _I donate [7, 9] points_.
 
-## Detection
+### Baseline Data
 
-To extract the quantities described in the  `speech` vector, one can use the `wordstonumbers` package and apply the corresponding function (`words_to_numbers`) to it. As this just replaces the spelled number with a digit, one also has to remove all the characters from the respective strings. I do so, and write the result as a numeric into a variable called `speech2text`. 
+Because I also have the baseline recordings where participants say _I have read and understand the instructions_, we can transcribe them as well. Since I do not intend to analyze the content, I set the corresponding code chunk option such that the following few lines are not evaluated. This implies, that I will not use the information in what follows until some voice analytics is applied.
+
+```{r gl_speech_2, eval = TRUE}
+# initiate empty vector
+long[, spokenBaseline := as.character("")]
+
+# populate vector in for loop
+for(file in baselines){
+        tmp <- gl_speech(audio_source = file, 
+                         languageCode = "en", 
+                         encoding = "FLAC", 
+                         sampleRateHertz = 44100, 
+                         customConfig = list('audio_channel_count' = 1))
+        
+        transcript <- tmp$transcript[,1]
+        
+        long[baselineFilePath == file,
+           spokenBaseline := transcript]
+}
+
+# display vector
+kable(long[!is.na(baselineBase64),
+           .(spokenBaseline)])
+```
+
+
+# Words to Numbers
+
+To extract the quantities described in the  `spokenDecision` vector, one can use the `wordstonumbers` package and apply the corresponding function (`words_to_numbers`) to it. As this just replaces the spelled number with a digit, one also has to remove all the characters from the respective strings. I do so, and write the result as a numeric into a variable called `spokenDecision2text`. 
 
 **Note** that for each of these transcriptions, Google bills 15s.^[Also note that you have a free monthly contigent of 60 minutes.]
 
 ```{r speech2text, warning = FALSE}
-speechtotext <- apply(X = dt[,.(speech)],
+speechtotext <- apply(X = long[,.(spokenDecision)],
                       MARGIN = 1,
                       FUN = words_to_numbers) %>%
         str_replace_all(pattern = "\\D",
                         replacement = "") %>%
         as.numeric()
 
-dt[, speech2text := speechtotext]
+long[, spokenDecision2text := speechtotext]
 ```
 
-Ultimately, this variable can be blended with `D_Charity.1.player.share`, such that we have one column that contains the donations of all participants. This variable, I call this variable `donation`, is our primary outcome. We expect it to differ between the two treatments.^[To put it differently, `speech2text` and `D_Charity.1.player.share` should differ.]
+Ultimately, this variable can be blended with `share`, such that we have one column that contains the donations of all participants. This variable, I call this variable `donation`, is our primary outcome. We expect it to differ between the two treatments.^[To put it differently, `spokenDecision2text` and `share` should differ.]
 
 ```{r createOutcome}
 # create donation variable
-dt[, donation := D_Charity.1.player.share]
-dt[!is.na(speech2text), donation := speech2text]
+long[, donation := share]
+long[!is.na(spokenDecision2text), donation := spokenDecision2text]
+```
+# Result
 
-# display outcomes
-dt[,
-   .(participant.code,
-     D_Charity.1.player.voice_interface,
-     D_Charity.1.player.share,
-     speech2text,
-     donation)] %>% kable()
+Finally, one can select some technical covariates (`techC`) as well as covariates stemming from the questionnaire (`questC`) that do not change within the session and merge them to the `long` data.table.
+
+```{r technicalCovariates}
+# create DT with technical covariates from first period
+# (assuming they are constant across rounds)
+techC <- dt[,
+            .(session.code,
+              participant.code,
+              participant.label,
+              longitude        = D_Charity.1.player.longitude,
+              latitude         = D_Charity.1.player.latitude,
+              ipAddress        = D_Charity.1.player.ipAddress,
+              screenWidth      = D_Charity.1.player.width,
+              screenHeight     = D_Charity.1.player.height,
+              devicePixelRatio = D_Charity.1.player.devicePixelRatio,
+              userAgent        = D_Charity.1.player.userAgent)]
+
+# merge
+long <- data.table::merge.data.table(x = long,
+                                     y = techC,
+                                     by = c("session.code",
+                                            "participant.code",
+                                            "participant.label"))
+```
+
+```{r questionnaireCovariates}
+# create DT with covariates from questionnaire
+questC <- dt[,
+             .(session.code,
+               participant.code,
+               participant.label,
+               Q1 = D_Charity.1.player.comp_1)]
+
+# merge
+long <- data.table::merge.data.table(x = long,
+                                     y = questC,
+                                     by = c("session.code",
+                                            "participant.code",
+                                            "participant.label"))
+```
+
+The resulting data looks as follows.
+
+```{r displayFinalData}
+display <- long
+display[!is.na(voiceBase64), voiceBase64 := voiceBase64 %>% str_sub(1500, 1575) %>% paste0("...")]
+display[!is.na(baselineBase64), baselineBase64 := baselineBase64 %>% str_sub(1500, 1575) %>% paste0("...")]
+kable(display)
 ```
 
