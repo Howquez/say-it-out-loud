@@ -47,6 +47,7 @@ class Player(BasePlayer):
     height = models.IntegerField(doc="the participant's screen width.", blank=True)
     devicePixelRatio = models.IntegerField(doc="the participant's ratio of pixel sizes.", blank=True)
     userAgent = models.LongStringField(doc="get user agent, i.e. (unreliable) device info.", blank=True)
+    recordings = models.IntegerField(doc="Counts the number of times a recording was made.", blank=True)
 
     # questionnaire
     comp_1 = models.IntegerField(
@@ -144,7 +145,7 @@ class B_Instructions(Page):
 
 class D_Comprehension(Page):
     form_model = "player"
-    form_fields = ["comprehensionAudio"]
+    form_fields = ["comprehensionAudio", "recordings"]
 
     @staticmethod
     def is_displayed(player):
@@ -166,7 +167,7 @@ class D_Comprehension(Page):
 
 class E_Decision(Page):
     form_model = "player"
-    form_fields = ["share", "voiceBase64",
+    form_fields = ["share", "voiceBase64", "recordings",
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod

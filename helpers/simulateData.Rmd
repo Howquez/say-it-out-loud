@@ -1,0 +1,72 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(stringi)
+```
+
+```{r}
+load("../data/processed/longData.rda")
+```
+
+```{r}
+sim <- rbindlist(l = list(long, long, long, long, long, long, long, long))
+```
+
+```{r}
+N <- sim[, .N] / long[, max(as.numeric(as.character(round)), na.rm = TRUE)]
+participants <-stri_rand_strings(n = N,
+                            length = 8,
+                            pattern = "[a-z0-9]")
+
+names(long)
+```
+
+```{r}
+N <- 400
+sim <- data.table(session.code = rep(stri_rand_strings(n = 4,
+                                                       length = 8,
+                                                       pattern = "[a-z0-9]"), 
+                                     times = N/4),
+                  participant.code = stri_rand_strings(n = N,
+                                                       length = 8,
+                                                       pattern = "[a-z0-9]"),
+                  participant.label = stri_rand_strings(n = N,
+                                                        length = 8,
+                                                        pattern = "[a-z0-9]"),
+                  round = 1,
+                  voiceInterface = rep(c(1, 0), each = N/2),
+                  share = NA,
+                  voiceBase64 = NA,
+                  baselineBase64 = NA,
+                  decisionFilePath = NA,
+                  baselineFilePath = NA,
+                  spokenDecision = NA,
+                  spokenBaseline = NA,
+                  spokenDecision2text = NA,
+                  donation = NA,
+                  longitude = NA,
+                  latitude = NA,
+                  ipAddress = NA,
+                  screenWidth = NA,
+                  screenHeight = NA,
+                  devicePixelRatio = NA,
+                  userAgent = NA,
+                  Q1 = NA)
+
+setorder(sim, session.code)
+
+sim[voiceInterface == 0,
+    share := sample(x = 0:10, size = .N, replace = TRUE)]
+```
+
+
+# how to proceed
+
+duplicate the existing rows, then fake some strings and donations.

@@ -171,6 +171,7 @@ const application = (index) => {
             clearControls()
             clearDisplay()
             recordings += 1
+            document.getElementById("recordings").value = recordings
 
             if(allow_replay){
                 addAudio()

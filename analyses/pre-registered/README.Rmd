@@ -1,5 +1,5 @@
 ---
-title: "Pre-processing"
+title: "Data processing"
 author: Hauke Roggenkamp | 
 date: "`r Sys.Date()`"
 output:
@@ -33,6 +33,7 @@ You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
     + [decode](#decode) a Base64 string to a .wav file and store it
     + pass these files to a [speech-to-text](#speech-to-text) API (Google)
 3. [extract the quantities](#words-to-numbers) from Google's text output
+4. [Analyze](analysis) the data in search for a treatment effect.
     
 
 # Setup
@@ -251,6 +252,8 @@ Ultimately, this variable can be blended with `share`, such that we have one col
 long[, donation := share]
 long[!is.na(spokenDecision2text), donation := spokenDecision2text]
 ```
+
+
 # Result
 
 Finally, one can select some technical covariates (`techC`) as well as covariates stemming from the questionnaire (`questC`) that do not change within the session and merge them to the `long` data.table.
@@ -302,4 +305,21 @@ display[!is.na(voiceBase64), voiceBase64 := voiceBase64 %>% str_sub(1500, 1575) 
 display[!is.na(baselineBase64), baselineBase64 := baselineBase64 %>% str_sub(1500, 1575) %>% paste0("...")]
 kable(display)
 ```
+
+```{r saveData}
+# save data as rda and csv files
+save(long, file = "../../data/processed/longData.rda")
+write.csv(long, file = "../../data/processed/longData.csv")
+```
+
+
+# Analysis
+
+```{r}
+long[round == 1,
+     .(mean = mean(donation, na.rm = TRUE)),
+     by = c("voiceInterface", "round")] %>% 
+        kable()
+```
+
 
