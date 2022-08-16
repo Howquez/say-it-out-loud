@@ -11,7 +11,7 @@ SESSION_CONFIGS = [
         name='slim',
         display_name="Charity",
         app_sequence=["D_Charity"],
-        num_demo_participants=3,
+        num_demo_participants=2,
     ),
 ]
 

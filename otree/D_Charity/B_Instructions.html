@@ -42,14 +42,30 @@
                 <!-- Decision Card -->
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
-                        Some Intro Text
 
-                        <hr class="">
+                        <p class="lead mb-0">Thank you for your interest in this study.</p>
+                        <hr class="mt-0">
+                        <p class="text-muted">
+                            You are about to participate in a decision making study. If you follow the instructions carefully,
+                            you can earn money. How much you earn depends on the decisions you make.
+                            Your earnings will be transferred to your account at the end of the study.
+                        </p>
+
                         {{ include C.RULES_TEMPLATE }}
+
+                        <p class="lead mb-0">Help</p>
+                        <hr class="mt-0">
+                        <p class="text-muted">
+                            You can revisit these instructions throughout the study. Just click on the
+                            <i class="bi bi-info-circle-fill text-dark"  style="cursor: pointer;"
+                               data-bs-toggle="offcanvas" data-bs-target="#offcanvasInstructions"
+                               aria-controls="offcanvasInstructions">
+                            </i>-icon.
+                        </p>
 
                         {{ formfields }}
 
-                        <div class="d-flex justify-content-center m-3">
+                        <div class="d-flex justify-content-center mt-5 mb-3">
                             <button class="btn btn-primary shadow" type="submit" id="submitButton">
                                 Understood!
                             </button>

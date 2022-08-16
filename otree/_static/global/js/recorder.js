@@ -19,6 +19,7 @@ var message = ' "I want to transfer x point(s)."'
 
 // collect DOMs
 const display = document.querySelector('.display')
+const readAloud = document.querySelector('.readAloud')
 const controllerWrapper = document.querySelector('.controllers')
 const replay = document.querySelector('.replay')
 
@@ -28,8 +29,11 @@ let mediaRecorder, chunks = [], audioURL = '', blob
 
 // template specifics (comprehension vs decision screen)
 if(template == "comprehension"){
-    message = ' "I have read and understand the instructions."'
+    message = '"I have read and understand the instructions."'
     inputField = document.getElementById("comprehensionAudio")
+    readAloud.textContent = '"I have read and understand the instructions."'
+}else{
+    readAloud.textContent = '"I transfer ... point(s)."'
 }
 
 
@@ -148,7 +152,7 @@ const application = (index) => {
             clearDisplay()
             clearControls()
 
-            addMessage('Press the left button to start recording your decision and say' + message)
+            addMessage('Press the left button to start recording your decision and say:')
             addButton('record', 'voiceRecording()', 'Start Recording', "success") //, "bi bi-record-fill")
             document.getElementById("submit_button").disabled = true;
             break;
@@ -168,13 +172,15 @@ const application = (index) => {
             clearDisplay()
             recordings += 1
 
-            if(allow_replay){addAudio()};
-            addMessage('Submit or record again saying' + message)
+            if(allow_replay){
+                addAudio()
+                document.getElementById("alertMessage").innerHTML = "You can listen to your recording below to ensure a sufficient audio quality."
+                document.getElementById("reviewAlert").className = "alert alert-light text-dark shadow-sm"
+            };
+            addMessage('Submit or record again saying:')
             // addButton('download', 'downloadAudio()', 'Download Audio', "primary")
             addButton('record', 'voiceRecording()', 'Record Again', "success", "bi bi-arrow-repeat")
             document.getElementById("submit_button").disabled = false;
-            document.getElementById("alertMessage").innerHTML = "You can listen to your recording below to ensure a sufficient audio quality."
-            document.getElementById("reviewAlert").className = "alert alert-primary"
             break
 
         default:

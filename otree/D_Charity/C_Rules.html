@@ -1,7 +1,44 @@
-You are endowed with {{ C.ENDOWMENT }}.
-<br> <br>
-You can decide how much of your {{ C.ENDOWMENT }} to transfer to a charity. You can choose any
-amount between 0 and {{ C.ENDOWMENT }}. The charity receives the amount that you decide to transfer while you receive
-the amount that you decide not to transfer (and thus to keep).
+<p class="lead mb-0">Instructions</p>
+<hr class="mt-0">
+<p class="text-muted">
+    You are endowed with {{ C.ENDOWMENT }}.
+    <br> <br>
+    You can decide how many of your {{ C.ENDOWMENT }} to transfer to a charity.
+    Doing so, you can choose any amount between 0 and {{ C.ENDOWMENT }}. The charity, the <em>American Red Cross</em>,
+    receives the amount that you decide to transfer while you receive the amount that you decide not to transfer
+    (and thus to keep).
+
+    Please note that your decision has an actual impact: Both you and the <em>American Red Cross</em> will be paid according
+    to your choice.
+</p>
+
+<p class="lead mb-0">Procedure</p>
+<hr class="mt-0">
+<p class="text-muted">
+    Before you make your decision, we ask you to confirm that you have read and understand the instructions using
+    your microphone.
+
+    After you have made your decision, you have to answer a short questionnaire.
+    Once you have done so, you have finished this study.
+</p>
 
 
+<p class="lead mb-0">Decision</p>
+<hr class="mt-0">
+{{ if player.voice_interface }}
+<p class="text-muted">
+    You will use your microphone to record your decision. To this end, you will see buttons that enable you to start, stop
+    and submit your recording. In addition, you will see a fill-in-the-gap-text. Use it to communicate your decision.
+    Note that you can withdraw your recording and start a new one before you submit. You cannot
+    listen to your recording, though.
+
+    Please make sure that one can understand your decision loud and clearly, while you confirm that you have read and
+    understand the instructions.
+</p>
+
+{{ else }}
+<p class="text-muted">
+    You will use your keyboard to record your decision. To this end, you will see a text input as well as a submit-button.
+    You can enter any integer between 0 and 10 before you submit.
+</p>
+{{ endif }}

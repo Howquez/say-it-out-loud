@@ -1,10 +1,7 @@
 {{ block scripts }}
-    <script src="{% static 'global/js/tech_covariates.js' %}"></script>
-    <script src="{% static 'global/js/recorder.js' %}"></script>
 {{ endblock }}
 
 {{ block global_styles  }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 <style>
     .otree-title {
         display: none;
@@ -12,28 +9,20 @@
 </style>
 {{ endblock }}
 
+{{ block styles }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+{{ endblock }}
 
 
 {{ block content }}
 <body class="bg-light.bg-gradient">
 <img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
 
-    <!-- Hidden inputs for web tracking-->
-    <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
-    <input type="hidden" name="width"     id="width">
-    <input type="hidden" name="height"    id="height">
-    <input type="hidden" name="longitude" id="longitude">
-    <input type="hidden" name="latitude"  id="latitude">
-    <input type="hidden" name="userAgent" id="userAgent">
-    <input type="hidden" name="ipAddress" id="ipAddress">
-    <!-- Hidden inputs for voice interface -->
-    <input type="hidden" name="comprehensionAudio" id="comprehensionAudio">
-
     <!-- Header -->
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow" data-toggle="tooltip" data-placement="bottom" title="Round {{ player.round_number }}">
-                Comprehension
+                Questionnaire
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -51,60 +40,16 @@
         <div class="row justify-content-center">
             <div class="col-sm-8 col-md-8 col-lg-6">
                 <!-- Decision Card -->
-                <div class="card rounded mt-3 shadow-sm  border-light">
+                <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
 
-                        <p class="mb-4">
-                            <small>
-                                Please confirm that you have read and understand the instructions by recording the
-                                following sentence using the button below.
-                            </small>
-                            <br>
-                            <small class="text-muted">
-                                If you are uncertain, feel free to read
-                                through the instructions by clicking on the
-                                <i class="bi bi-info-circle-fill text-dark"  style="cursor: pointer;"
-                                   data-bs-toggle="offcanvas" data-bs-target="#offcanvasInstructions"
-                                   aria-controls="offcanvasInstructions"></i>-icon.
-                            </small>
-                        </p>
+                        {{ formfields }}
 
-                        <div class="container-fluid p-0 m-0 mb-3">
-                            <div class="row align-items-center">
-                                <div class="col m-0">
-                                    <div class="controllers">
-                                        <!-- Start, stop, (download,) repeat -->
-                                    </div>
-                                </div>
-                                <div class="col m-0">
-                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-center m-3">
+                            <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                                Ciao
+                            </button>
                         </div>
-                    </div>
-                </div>
-                <div class="alert alert-light text-dark shadow-sm  border-warning mt-3 text-center">
-                    <small>
-                        <div class="display">
-                            <!-- Add Messages -->
-                        </div>
-                    </small>
-                    <mark class="readAloud">
-                        <!-- Add Read Aloud Message for RegEx -->
-                    </mark>
-                </div>
-
-                <div id="reviewAlert" class="alert alert-light text-dark shadow-sm  border-light" role="alert">
-                    <small>
-                        <em id="alertMessage">
-                            Make sure that the audio is clear and understandable.
-                            You cannot be paid, if this is not the case.
-                        </em>
-                    </small>
-                    <div class="replay">
-                        <!-- replay -->
                     </div>
                 </div>
             </div>
@@ -143,6 +88,5 @@
         </div>
     </div>
 
-</body>
-
 {{ endblock }}
+

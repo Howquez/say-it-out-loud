@@ -53,17 +53,17 @@
         <div class="row justify-content-center">
             <div class="col-sm-8 col-md-8 col-lg-6">
                 <!-- Decision Card -->
-                <div class="card rounded mt-3 shadow-lg">
+                <div class="card rounded mt-3 shadow-sm  border-light">
                     <div class="card-body">
 
                         <p class="card-text mb-1">
-                            How much of your {{ C.ENDOWMENT }} do you want to transfer to the recipient?
+                            How many of your {{ C.ENDOWMENT }} do you want to transfer to the <em>American Red Cross</em>?
                         </p>
 
                         <p class="mb-4 text-secondary">
                             <small>
-                                The recipient receives the amount that you decide to transfer to him/her while you
-                                receive the amount that you decide not to transfer and thus to keep.
+                                The <em>American Red Cross</em> receives the amount that you decide to transfer to them
+                                while you receive the points that are left.
                             </small>
                         </p>
                         <p>
@@ -71,38 +71,48 @@
                         </p>
 
                         {{ if player.voice_interface }}
-                            <small class="mb-4">
-                                <div class="display">
-                                    <!-- Add Messages -->
-                                </div>
-                            </small>
-
                             <div class="container-fluid p-0 m-0 mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col m-0">
-                                        <div class="controllers">
-                                            <!-- Start, stop, (download,) repeat -->
+                                    <div class="row align-items-center">
+                                        <div class="col m-0">
+                                            <div class="controllers">
+                                                <!-- Start, stop, (download,) repeat -->
+                                            </div>
+                                        </div>
+                                        <div class="col m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
                                         </div>
                                     </div>
-
+                                </div>
                         {{ else }}
                             <div class="container-fluid p-0 m-0">
                                 <div class="row align-items-center">
-                                    <div class="col m-0">
-                                        <input type="number" class="form-control m-0 border-primary" placeholder="" id="id_share" name="share" min="0" max="10" required>
+                                    <div class="col-7 m-0">
+                                        <input type="number" class="form-control m-0 border-primary" placeholder="I transfer ... point(s)." id="id_share" name="share" min="0" max="10" required>
                                     </div>
-
-                        {{ endif }}
-                                    <div class="col m-0">
-                                        <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send" onclick="submitForm();">
+                                    <div class="col-5 m-0">
+                                        <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
                                             Submit
                                         </button>
                                     </div>
                                 </div>
                             </div>
-
+                        {{ endif }}
                     </div>
                 </div>
+                {{ if player.voice_interface }}
+                    <div class="alert alert-light shadow-sm  border-warning mt-4 text-dark text-center">
+                        <small>
+                            <div class="display">
+                                <!-- Add Messages -->
+                            </div>
+                        </small>
+                        <mark class="readAloud">
+                            <!-- Add Read Aloud Message for RegEx -->
+                        </mark>
+                    </div>
+                {{ endif }}
             </div>
         </div>
     </div>
