@@ -12,6 +12,8 @@ You can find the experiment's [Demo here](https://ibt-hsg.herokuapp.com/). A cli
 creates a session and redirects you to a page containing several URLs. 
 Click on the _Session-wide demo link_ to open the experiment.
 
+[![](otree/_static/global/images/Screenshot.png)](https://ibt-hsg.herokuapp.com/)
+
 ## 📊 Analysis plan (WIP)
 The repository will also contain the [analysis](https://github.com/Howquez/say-it-out-loud/tree/main/analyses) of the resulting data. 
 
