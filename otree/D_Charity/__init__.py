@@ -28,10 +28,8 @@ class Player(BasePlayer):
     voice_interface = models.BooleanField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
 
     # primary outcome variable
-    share = models.IntegerField(doc="the share the dictator allocates to the recipient.",
-                                min=0,
-                                blank=True,
-                                initial=0)  # reconsider this part.
+    share = models.StringField(doc="the share the dictator allocates to the recipient.",
+                                blank=True)  # reconsider this part.
     voiceBase64 = models.LongStringField(doc="base64 encoded voice input on decision screen.",
                                          blank=True)
 

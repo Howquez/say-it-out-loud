@@ -1,10 +1,18 @@
 <p class="lead mb-0">Instructions</p>
 <hr class="mt-0">
 <p class="text-muted">
-    You are endowed with {{ C.ENDOWMENT }}.
-    <br> <br>
+    You are endowed with {{ C.ENDOWMENT }}. At the end of the experiment all points you have will be converted into USD
+    at the exchange rate of
+    ${{ session.config.real_world_currency_per_point }} per point
+    in addition to the show-up fee of {{ session.config.participation_fee }}.
+</p>
+
+<p class="lead mb-0">Instructions</p>
+<hr class="mt-0">
+<p class="text-muted">
     You can decide how many of your {{ C.ENDOWMENT }} to transfer to a charity.
-    Doing so, you can choose any amount between 0 and {{ C.ENDOWMENT }}. The charity, the <em>American Red Cross</em>,
+    Doing so, you can choose any amount between 0 and {{ C.ENDOWMENT }}. The charity, the
+    <a href="https://www.redcross.org/" target="_blank">American Red Cross</a>,
     receives the amount that you decide to transfer while you receive the amount that you decide not to transfer
     (and thus to keep).
 
@@ -42,3 +50,12 @@
     You can enter any integer between 0 and 10 before you submit.
 </p>
 {{ endif }}
+
+<p class="lead mb-0">Donation Receipt</p>
+<hr class="mt-0">
+<p class="text-muted">
+    We will upload a donation receipt as well as a document that lists individual donations here:
+    <a href="https://www.hsu-hh.de/be/forschung" target="_blank">https://www.hsu-hh.de/be/forschung</a>.
+    Because we do not collect personally identifiable information, you can use your participant code
+    <mark>{{ participant.code }}</mark> to find your contribution in that list.
+</p>

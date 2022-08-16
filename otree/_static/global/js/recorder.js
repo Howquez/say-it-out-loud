@@ -33,7 +33,7 @@ if(template == "comprehension"){
     inputField = document.getElementById("comprehensionAudio")
     readAloud.textContent = '"I have read and understand the instructions."'
 }else{
-    readAloud.textContent = '"I transfer ... point(s)."'
+    readAloud.textContent = '"I transfer [...] point(s)."'
 }
 
 
