@@ -1,4 +1,4 @@
-<p class="lead mb-0">Instructions</p>
+<p class="lead mb-0">Earnings</p>
 <hr class="mt-0">
 <p class="text-muted">
     You are endowed with {{ C.ENDOWMENT }}. At the end of the experiment all points you have will be converted into USD
@@ -7,7 +7,7 @@
     in addition to the show-up fee of {{ session.config.participation_fee }}.
 </p>
 
-<p class="lead mb-0">Instructions</p>
+<p class="lead mb-0">Decision</p>
 <hr class="mt-0">
 <p class="text-muted">
     You can decide how many of your {{ C.ENDOWMENT }} to transfer to a charity.
@@ -20,18 +20,7 @@
     to your choice.
 </p>
 
-<p class="lead mb-0">Procedure</p>
-<hr class="mt-0">
-<p class="text-muted">
-    Before you make your decision, we ask you to confirm that you have read and understand the instructions using
-    your microphone.
-
-    After you have made your decision, you have to answer a short questionnaire.
-    Once you have done so, you have finished this study.
-</p>
-
-
-<p class="lead mb-0">Decision</p>
+<p class="lead mb-0">Modality</p>
 <hr class="mt-0">
 {{ if player.voice_interface }}
 <p class="text-muted">
@@ -50,6 +39,19 @@
     You can enter any integer between 0 and 10 before you submit.
 </p>
 {{ endif }}
+<p class="text-muted">
+    The input you provide will be analyzed anonymously using algorithmic tools.
+</p>
+
+<p class="lead mb-0">Procedure</p>
+<hr class="mt-0">
+<p class="text-muted">
+    Before you make your decision, we ask you to confirm that you have read and understand the instructions using
+    your microphone.
+
+    After you have made your decision, you have to answer a short questionnaire.
+    Once you have done so, you have finished this study.
+</p>
 
 <p class="lead mb-0">Donation Receipt</p>
 <hr class="mt-0">

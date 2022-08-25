@@ -28,8 +28,8 @@ class Player(BasePlayer):
     voice_interface = models.BooleanField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
 
     # primary outcome variable
-    share = models.StringField(doc="the share the dictator allocates to the recipient.",
-                                blank=True)  # reconsider this part.
+    writtenDecision = models.StringField(doc="the share the dictator allocates to the recipient.",
+                                         blank=True)  # reconsider this part.
     voiceBase64 = models.LongStringField(doc="base64 encoded voice input on decision screen.",
                                          blank=True)
 
@@ -165,7 +165,7 @@ class D_Comprehension(Page):
 
 class E_Decision(Page):
     form_model = "player"
-    form_fields = ["share", "voiceBase64", "recordings",
+    form_fields = ["writtenDecision", "voiceBase64", "recordings",
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
@@ -190,9 +190,9 @@ class E_Decision(Page):
 class F_Results(Page):
     @staticmethod
     def js_vars(player):
-        dic_share = (1 - (player.share / 10)) * 100
+        dic_writtenDecision = (1 - (player.writtenDecision / 10)) * 100
         return dict(
-            dictators=dic_share,
+            dictators=dic_writtenDecision,
             role="Allocator"
         )
 
