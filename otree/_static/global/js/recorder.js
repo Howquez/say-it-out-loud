@@ -74,6 +74,7 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
                console.log(base64.substring(1, 42));
                inputField.value = base64;
                console.log("inputField " + inputField.value.substring(1, 42));
+               transcript_resultat = liveSend(base64);
             }
         }
 

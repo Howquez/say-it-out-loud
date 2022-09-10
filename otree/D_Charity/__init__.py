@@ -169,6 +169,10 @@ class E_Decision(Page):
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
+    def live_method(player: Player, data):
+        return {player.id_in_group: data}
+
+    @staticmethod
     def js_vars(player):
         return dict(
             participant_label=player.participant.label,

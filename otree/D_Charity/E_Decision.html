@@ -2,6 +2,7 @@
 <script src="{% static 'global/js/tech_covariates.js' %}"></script>
 {{ if player.voice_interface }}
     <script src="{% static 'global/js/recorder.js' %}"></script>
+    <script src="{% static 'global/js/helper_decision.js' %}"></script>
 {{ endif }}
 {{ endblock }}
 
@@ -74,6 +75,7 @@
                         {{ if player.voice_interface }}
                             <div class="container-fluid p-0 m-0 mb-3">
                                     <div class="row align-items-center">
+                                        <div id="test-message"></div>
                                         <div class="col-7 m-0">
                                             <div class="controllers">
                                                 <!-- Start, stop, (download,) repeat -->
