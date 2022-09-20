@@ -1,12 +1,14 @@
 ---
-title: "Data processing"
-author: Hauke Roggenkamp | 
-date: "`r Sys.Date()`"
 output:
   github_document:
     toc: false
-    toc_depth: 1 
-# distill::distill_article
+    toc_depth: 1
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "../../"
+    )
+  })
 params:
   data:
     label: "What kind of data do you want to process"
@@ -14,6 +16,10 @@ params:
     input: select
     choices: [Simulation, Real Data]
 ---
+
+![Banner](img/SIOL_Banner.jpg)
+
+_Hauke Roggenkamp | `r Sys.Date()`_
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
