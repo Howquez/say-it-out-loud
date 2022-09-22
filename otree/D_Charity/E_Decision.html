@@ -75,7 +75,6 @@
                         {{ if player.voice_interface }}
                             <div class="container-fluid p-0 m-0 mb-3">
                                     <div class="row align-items-center">
-                                        <div id="test-message"></div>
                                         <div class="col-7 m-0">
                                             <div class="controllers">
                                                 <!-- Start, stop, (download,) repeat -->
@@ -114,6 +113,9 @@
                         <strong class="text-primary readAloud">
                             <!-- Add Read Aloud Message for RegEx -->
                         </strong>
+                        <div id="test-message">
+                            <!-- Output base64 string for testing purposes -->
+                        </div>
                     </div>
                 {{ else }}
                     <div class="alert alert-light shadow-sm mt-4 text-dark text-center">

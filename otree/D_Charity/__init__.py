@@ -24,6 +24,8 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    # testing
+    test = models.IntegerField()
     # treatment variable
     voice_interface = models.BooleanField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
 
@@ -170,7 +172,9 @@ class E_Decision(Page):
 
     @staticmethod
     def live_method(player: Player, data):
-        return {player.id_in_group: data}
+        print('the base64 string of ', player.id_in_group, ' is ', len(data), ' characters long.')
+        player.test = len(data)
+        return {player.id_in_group: len(data)}
 
     @staticmethod
     def js_vars(player):

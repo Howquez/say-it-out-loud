@@ -71,10 +71,9 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
             reader.onloadend = function() {
                base64 = reader.result;
                base64 = base64.split(',')[1];
-               console.log(base64.substring(1, 42));
                inputField.value = base64;
                console.log("inputField " + inputField.value.substring(1, 42));
-               transcript_resultat = liveSend(base64);
+               liveSend(base64);
             }
         }
 
