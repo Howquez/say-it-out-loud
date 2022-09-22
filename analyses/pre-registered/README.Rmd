@@ -32,7 +32,10 @@ This document belongs to a [project](https://github.com/Howquez/say-it-out-loud)
 
 Importantly, participants encounter one of two interfaces to communicate their decision: They either type their decision using a classic text input or they make a voice recording that we analyze using a speech-to-text engine. Which type of interface a participant encounters is determined randomly.
 
-You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
+**More information:**
+
+- You can find the experiment's demo [here](https://ibt-hsg.herokuapp.com/demo).
+- A kaban board can be found [here](https://github.com/users/Howquez/projects/1/views/1).
 
 **Read further if you want to learn how Base64 strings (stemming from recorded voice) is decoded to audio files and then converted to text which is then converted to numeric information.**
 
