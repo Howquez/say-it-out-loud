@@ -1,0 +1,204 @@
+{{ block scripts }}
+<script src="{% static 'global/js/tech_covariates.js' %}"></script>
+{{ if player.interface == "Voice"}}
+    <script src="{% static 'global/js/recorder_setup.js' %}"></script>
+    <script src="{% static 'global/js/recorder.js' %}"></script>
+    <script src="{% static 'global/js/recorder_helper.js' %}"></script>
+{{ endif }}
+{{ endblock }}
+
+{{ block global_styles  }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+<style>
+    .otree-title {
+        display: none;
+        }
+</style>
+{{ endblock }}
+
+
+
+{{ block content }}
+<body class="bg-light.bg-gradient">
+<img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+
+    <!-- Hidden inputs for web tracking-->
+    <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
+    <input type="hidden" name="width"     id="width">
+    <input type="hidden" name="height"    id="height">
+    <input type="hidden" name="longitude" id="longitude">
+    <input type="hidden" name="latitude"  id="latitude">
+    <input type="hidden" name="userAgent" id="userAgent">
+    <input type="hidden" name="ipAddress" id="ipAddress">
+    <input type="hidden" name="recordings" id="recordings">
+
+    <!-- Hidden inputs for voice interface -->
+    <input type="hidden" name="spokenDecision" id="spokenDecision">
+
+    <!-- Header -->
+    <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
+        <h5>
+            <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow" data-toggle="tooltip" data-placement="bottom" title="Round {{ player.round_number }}">
+                {{ if player.round_number == C.NUM_ROUNDS}} Last period {{ else }} Period {{ player.round_number }} {{ endif }}
+            </span>
+        </h5>
+        <div class="me-3" style="cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill ms-2" viewBox="0 0 16 16" data-bs-toggle="offcanvas" data-bs-target="#offcanvasInstructions" aria-controls="offcanvasInstructions" id="instructions_icon">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-circle ms-2" viewBox="0 0 16 16" data-bs-toggle="offcanvas" data-bs-target="#offcanvasQuit" aria-controls="offcanvasQuit" id="quitButton">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-8 col-md-8 col-lg-6">
+
+                <!-- Decision Card -->
+                <div class="card rounded mt-3 shadow-sm  border-light">
+                    <div class="card-body">
+
+                        <p class="card-text mb-1">
+                            How many of your {{ C.ENDOWMENT }} do you want to allocate (in cents)?
+                        </p>
+
+                        <p class="mb-4 text-secondary">
+                            <small>
+                                The <em>Recipient</em> you are matched with receives the amount that you decide to
+                                transfer to them while you receive the points that are left.
+                            </small>
+                        </p>
+                        <p>
+                            {{ formfield_errors 'spokenDecision' }}
+                        </p>
+
+                        {{ if player.interface == "Voice" }}
+                            <div class="container-fluid p-0 m-0 mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <div class="controllers">
+                                                <!-- Start, stop, (download,) repeat -->
+                                            </div>
+                                        </div>
+                                        <div class="col m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                        {{ else }}
+                            {{ if player.interface == "Text" }}
+                                <div class="container-fluid p-0 m-0 mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <input type="text" class="form-control m-0 border-success" placeholder="I transfer [...] point(s)." id="id_writtenDecision" name="writtenDecision" required>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ else }}
+                                <div class="container-fluid p-0 m-0 mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <select class="form-select" aria-label="I transfer [...] point(s).">
+                                              <option selected>Open this select menu</option>
+                                              <option value="1">One</option>
+                                              <option value="2">Two</option>
+                                              <option value="3">Three</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ endif }}
+                        {{ endif }}
+                    </div>
+                </div>
+                {{ if player.interface == "Voice" }}
+                    <div class="alert alert-light shadow-sm mt-4 text-dark text-center">
+                        <small>
+                            <div class="display">
+                                <!-- Add Messages -->
+                            </div>
+                        </small>
+                        <strong class="text-primary readAloud">
+                            <!-- Add Read Aloud Message for RegEx -->
+                        </strong>
+                        <div id="test-message">
+                            <!-- Output base64 string for testing purposes -->
+                        </div>
+                    </div>
+                {{ else }}
+                    <div class="alert alert-light shadow-sm mt-4 text-dark text-center">
+                        <small>
+                            <p>
+                                Transmit your decision by typing the following sentence into the left field:
+                            </p>
+                        </small>
+                        <strong class="text-primary">
+                            "I transfer [...] point(s)."
+                        </strong>
+                    </div>
+                {{ endif }}
+                <div id="reviewAlert" class="alert alert-light text-dark shadow-sm  border-light" role="alert">
+                    <small>
+                        <em id="alertMessage">
+                            Make sure that the audio is clear and understandable.
+                            You cannot be paid, if this is not the case.
+                        </em>
+                    </small>
+                    <div class="replay">
+                        <!-- replay -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasInstructions" aria-labelledby="offcanvasInstructionsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasInstructionsLabel">Instructions</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                {{ include C.RULES_TEMPLATE }}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Quit Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasQuit" aria-labelledby="offcanvasQuitLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasQuitLabel">Exit  study</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p>
+                If you intend to leave this study without getting paid, click on the button below.
+            </p>
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-outline-danger m-5" href="{{ redirect }}" role="button" style="border-radius: 40px;">
+                    Exit
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+{{ endblock }}

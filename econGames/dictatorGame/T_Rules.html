@@ -1,0 +1,64 @@
+<!--
+<p class="lead mb-0">Earnings</p>
+<hr class="mt-0">
+<p class="text-muted">
+    In addition to the fixed show-up fee of {{ session.config.participation_fee }},
+    you receive an endowment of {{ C.ENDOWMENT }} for your decision.
+</p>
+-->
+
+
+<p class="lead mb-0">Decision & Earnings</p>
+<hr class="mt-0">
+<p class="text-muted">
+    You are randomly matched with another participant, who also participates in the study right now.
+    You can decide how many of your {{ C.ENDOWMENT }} to transfer to this person.
+    Doing so, you can choose any amount between 0 and {{ C.ENDOWMENT }}. The other person,
+    receives the amount that you decide to transfer while you receive the amount that you decide not to transfer
+    (and thus to keep).
+
+    Please note that your decision has an actual impact: Both you and the other person will be paid according
+    to your choice.
+</p>
+
+<p class="lead mb-0">Modality</p>
+<hr class="mt-0">
+{{ if player.interface == "Voice" }}
+<p class="text-muted">
+    You will use your microphone to record your decision. To this end, you will see buttons that enable you to start, stop
+    and submit your recording. In addition, you will see a fill-in-the-gap-text. Use it to communicate your decision.
+    Note that you can withdraw your recording and start a new one before you submit. You cannot
+    listen to your recording, though.
+
+    Please make sure that one can understand your decision loud and clearly, while you confirm that you have read and
+    understand the instructions.
+</p>
+
+{{ else }}
+<p class="text-muted">
+    You will use your keyboard to record your decision. To this end, you will see a text input as well as a submit-button.
+    You can enter any integer between 0 and 500 (cent) before you submit.
+</p>
+{{ endif }}
+
+<p class="text-muted">
+    The input you provide will be analyzed anonymously using computer software.
+</p>
+
+<p class="lead mb-0">Procedure</p>
+<hr class="mt-0">
+<p class="text-muted">
+    After you have made your decision, you have to answer a short questionnaire.
+    Once you have done so, you have finished this study.
+</p>
+
+<p class="lead mb-0">...</p>
+<hr class="mt-0">
+<p class="text-danger">
+    I think we should tell this later:
+</p>
+<p class="text-muted">
+    I think we should tell this later:
+    In addition to the participant mentioned above, you will also be matched with <u>another</u> person, who participates in
+    this study right now. This person allocates money to you.
+</p>

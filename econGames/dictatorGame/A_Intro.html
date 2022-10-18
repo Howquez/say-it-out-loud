@@ -1,0 +1,81 @@
+{{ block content }}
+<body class="bg-light.bg-gradient">
+<img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+    <!-- Decision Card -->
+    <div class="card mt-5 shadow-lg">
+        <div class="card-body">
+            <h1 class="display-4">Welcome!</h1>
+            <p class="lead">Thank you for your interest in this study.</p>
+
+            <table class="table mt-5 mb-5 table-responsive">
+                <tbody>
+                    <tr>
+                        <th scope="row">Study</th>
+                        <td>Allocation-Game</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Duration</th>
+                        <td>
+                            Approximately 10 minutes: Reading the instructions takes about 5 minutes. Answering the
+                            questions takes another 5 minutes.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Payment</th>
+                        <td>
+                            {{ session.config.participation_fee }} as well as a bonus, the amount of which depends on
+                            your decisions.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Technical Requirements</th>
+                        <td>
+                            We will ask you to provide a voice input. For that reason,
+                            <strong class="text-primary"> we require you to use a device with a microphone</strong>.
+                            For the smoothest possible process, we advise using a modern browser with a stable
+                            Internet connection.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            Privacy
+                        </th>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="GDPR" required>
+                                <label class="form-check-label" for="GDPR">
+                                    I agree to the anonymized analysis of my answers for the purpose of scientific
+                                    evaluation according to the
+                                    <a class="text-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasGDPR" id="gdpr_text" style="cursor: pointer;">
+                                        <u>privacy policy</u>
+                                    </a>.
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center m-5">
+                <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                    Start
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GDPR Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasGDPR" aria-labelledby="offcanvasGDPRLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasGDPRLabel">Privacy Policy</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+
+            {{ include C.PRIVACY_TEMPLATE }}
+
+        </div>
+    </div>
+</body>
+{{ endblock }}
+
