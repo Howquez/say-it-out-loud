@@ -39,7 +39,7 @@ console.log("recorder ready!")
                 reader.onloadend = function() {
                    base64 = reader.result;
                    base64 = base64.split(',')[1];
-                   inputField.value = base64;
+                   inputField.value += ' RECORDING_' + recordings + ': ' + base64;
                    console.log("inputField " + inputField.value.substring(1, 42));
                    liveSend(base64);
                 }

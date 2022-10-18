@@ -66,6 +66,12 @@ def creating_session(subsession):
         player.interface = next(shuffle)
     print(os.getcwd())
 
+def set_payoffs(group: Group):
+    for p in group.get_players():
+        allocated = 2.3
+        received  = 1
+        p.payoff  = C.ENDOWMENT - allocated + received
+
 
 # PAGES -----
 class A_Intro(Page):
@@ -101,13 +107,6 @@ class C_Instructions(Page):
             redirect="",
         )
 
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        # setting Google credential
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../../ibtanalytics-0ba5cc05ef54.json'
-        # create client instance
-        client = speech.SpeechClient()
-
 class E_Decision(Page):
     form_model = "player"
     form_fields = ["test", "allocation", "spokenDecision",
@@ -132,32 +131,35 @@ class E_Decision(Page):
         print('the base64 string of ', player.id_in_group, ' is ', len(data), ' characters long.')
         player.test = len(data)
 
-        # setting Google credential
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../../ibtanalytics-0ba5cc05ef54.json'
-        # create client instance
-        client = speech.SpeechClient()
-
-        gcs_uri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw"
-
-        # audio = speech.RecognitionAudio(uri=gcs_uri)
-
-        audio = speech.RecognitionAudio(content=data)
-
-        config = speech.RecognitionConfig(
-            encoding=speech.RecognitionConfig.AudioEncoding.FLAC,
-            audio_channel_count=1,
-            sample_rate_hertz=48000,
-            language_code="en-US",
-        )
-
-        # Detects speech in the audio file
-        response = client.recognize(config=config, audio=audio)
-        print(response)
-
-        for result in response.results:
-            print("Transcript: {}".format(result.alternatives[0].transcript))
+        # # setting Google credential
+        # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../../ibtanalytics-0ba5cc05ef54.json'
+        # # create client instance
+        # client = speech.SpeechClient()
+        #
+        # # Google's example
+        # # gcs_uri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw"
+        # # audio = speech.RecognitionAudio(uri=gcs_uri)
+        #
+        # audio = speech.RecognitionAudio(content=data)
+        #
+        # config = speech.RecognitionConfig(
+        #     encoding=speech.RecognitionConfig.AudioEncoding.FLAC,
+        #     audio_channel_count=1,
+        #     sample_rate_hertz=48000,
+        #     language_code="en-US",
+        # )
+        #
+        # # Detects speech in the audio file
+        # response = client.recognize(config=config, audio=audio)
+        # print(response)
+        # for result in response.results:
+        #     print("Transcript: {}".format(result.alternatives[0].transcript))
 
         return {player.id_in_group: len(data)}
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        set_payoffs()
 
 class F_Results(Page):
 
