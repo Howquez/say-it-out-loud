@@ -38,8 +38,8 @@
     <!-- Header -->
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
-            <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow" data-toggle="tooltip" data-placement="bottom" title="Round {{ player.round_number }}">
-                Microphone Test
+            <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow">
+                1st Microphone Test
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -67,20 +67,12 @@
                             <br>
                         </p>
 
-                        <div class="container-fluid p-0 m-0 mb-3">
-                            <div class="row align-items-center">
-                                <div class="col m-0">
-                                    <div class="controllers">
-                                        <!-- Start, stop, (download,) repeat -->
-                                    </div>
-                                </div>
-                                <div class="col m-0">
-                                    <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+
+                        <strong class="text-primary readAloud">
+                            <!-- Add Read Aloud Message for RegEx -->
+                        </strong>
+
+
                     </div>
                 </div>
                 <div class="alert alert-light text-dark shadow-sm mt-3 text-center">
@@ -89,9 +81,20 @@
                             <!-- Add Messages -->
                         </div>
                     </small>
-                    <strong class="text-primary readAloud">
-                        <!-- Add Read Aloud Message for RegEx -->
-                    </strong>
+                    <div class="container-fluid p-0 mt-3 mb-1">
+                        <div class="row align-items-center">
+                            <div class="col m-0">
+                                <div class="controllers">
+                                    <!-- Start, stop, (download,) repeat -->
+                                </div>
+                            </div>
+                            <div class="col m-0">
+                                <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="reviewAlert" class="alert alert-light text-dark shadow-sm  border-light" role="alert">
