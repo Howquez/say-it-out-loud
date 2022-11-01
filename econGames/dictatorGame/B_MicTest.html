@@ -31,15 +31,15 @@
     <input type="hidden" name="recordings" id="recordings">
 
     <!-- Hidden inputs for voice interface -->
-    <input type="hidden" name="check1Base64" id="check1Base64">
-    <input type="hidden" name="check2Base64" id="check2Base64">
-    <input type="hidden" name="check3Base64" id="check3Base64">
+    <input type="hidden" name="checkBase64" id="checkBase64">
+    <input type="hidden" name="spokenDecisionBackup" id="spokenDecisionBackup"> <!-- we don't actually use this one -->
+
 
     <!-- Header -->
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow">
-                1st Microphone Test
+                Microphone Test #{{ player.round_number }}
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -83,7 +83,7 @@
                     </small>
                     <div class="container-fluid p-0 mt-3 mb-1">
                         <div class="row align-items-center">
-                            <div class="col m-0">
+                            <div class="col-7 m-0">
                                 <div class="controllers">
                                     <!-- Start, stop, (download,) repeat -->
                                 </div>

@@ -1,6 +1,13 @@
+{{ block scripts }}
+<script src="{% static 'global/js/record_time.js' %}"></script>
+{{ endblock }}
+
 {{ block content }}
 <body class="bg-light.bg-gradient">
 <img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+
+    <input type="hidden" name="privacy_time" id="privacy_time" value="0"/>
+
     <!-- Decision Card -->
     <div class="card mt-5 shadow-lg">
         <div class="card-body">
@@ -23,7 +30,7 @@
                     <tr>
                         <th scope="row">Payment</th>
                         <td>
-                            {{ session.config.participation_fee }} as well as a bonus, the amount of which depends on
+                            {{ session.config.participation_fee }} as well as a bonus. The amount of which depends on
                             your decisions.
                         </td>
                     </tr>
@@ -31,7 +38,7 @@
                         <th scope="row">Technical Requirements</th>
                         <td>
                             We will ask you to provide a voice input. For that reason,
-                            <strong class="text-primary"> we require you to use a device with a microphone</strong>.
+                            <strong class="text-primary"> we require you to use a device with a microphone in a quiet and private place</strong>.
                             For the smoothest possible process, we advise using a modern browser with a stable
                             Internet connection.
                         </td>

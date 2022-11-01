@@ -2,6 +2,7 @@
     let participant_label = js_vars.participant_label;
     let template = js_vars.template;
     let allow_replay = js_vars.allow_replay;
+    let round_number = js_vars.round_number;
 
 // collect DOMs
     // pick statement to be read out loud
@@ -19,6 +20,7 @@
 
     // Misc
     var recordings = 0;
+    var replays = 0;
     var inputField = document.getElementById("spokenDecision");
 
 // Based on template, choose the message to be read out loud
@@ -30,7 +32,7 @@
     var msg;
 
     if (template == "mic_test"){
-        msg = counting;
+        msg = [counting, blue, mama][round_number - 1];
     } else if (template == "decision"){
         msg = decision;
     }
@@ -38,8 +40,7 @@
 
 // template specifics (comprehension vs decision screen) -----
     if(template == "mic_test"){
-        inputField = document.getElementById("check1Base64")
-        readAloud.textContent = '"I have read and understand the instructions."'
-    }else{
-        readAloud.textContent = msg;
+        inputField = document.getElementById("checkBase64")
     }
+
+    readAloud.textContent = msg;

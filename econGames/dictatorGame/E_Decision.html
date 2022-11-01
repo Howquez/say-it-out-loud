@@ -5,6 +5,9 @@
     <script src="{% static 'global/js/recorder.js' %}"></script>
     <script src="{% static 'global/js/recorder_helper.js' %}"></script>
 {{ endif }}
+{{ if player.interface == "Slider"}}
+    <script src="{% static 'global/js/slider.js' %}"></script>
+{{ endif }}
 {{ endblock }}
 
 {{ block global_styles  }}
@@ -24,13 +27,14 @@
 
     <!-- Hidden inputs for web tracking-->
     <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
-    <input type="hidden" name="width"     id="width">
-    <input type="hidden" name="height"    id="height">
-    <input type="hidden" name="longitude" id="longitude">
-    <input type="hidden" name="latitude"  id="latitude">
-    <input type="hidden" name="userAgent" id="userAgent">
-    <input type="hidden" name="ipAddress" id="ipAddress">
+    <input type="hidden" name="width"      id="width">
+    <input type="hidden" name="height"     id="height">
+    <input type="hidden" name="longitude"  id="longitude">
+    <input type="hidden" name="latitude"   id="latitude">
+    <input type="hidden" name="userAgent"  id="userAgent">
+    <input type="hidden" name="ipAddress"  id="ipAddress">
     <input type="hidden" name="recordings" id="recordings">
+    <input type="hidden" name="replays"    id="replays">
 
     <!-- Hidden inputs for voice interface -->
     <input type="hidden" name="spokenDecision" id="spokenDecision">
@@ -67,8 +71,8 @@
 
                         <p class="mb-4 text-secondary">
                             <small>
-                                The <em>Recipient</em> you are matched with receives the amount that you decide to
-                                transfer while you receive the remaining amount.
+                                The Recipient you are matched with receives the amount that you decide to
+                                allocate while you earn the remaining amount.
                             </small>
                         </p>
                         <p>
@@ -77,23 +81,24 @@
 
                         {{ if player.interface == "Voice" }}
                             <small>
-                                Please transmit your decision using the following phrase.
+                                Please transmit your decision using the following phrase:
                             </small>
-                            <br>
+                            <br><br>
                             <strong class="text-primary readAloud">
                                 <!-- Add Read Aloud Message for RegEx -->
                             </strong>
                             <div id="test-message">
                                 <!-- Output base64 string for testing purposes -->
                             </div>
-                        {{ else }}
+                        {{ endif }}
+                        {{ if player.interface == "Text" }}
                             <small>
                                 <p>
                                     Transmit your decision by typing the following phrase into the left field:
                                 </p>
                             </small>
                             <strong class="text-primary">
-                                "I transfer [...] point(s)."
+                                "I allocate [...] cent(s)."
                             </strong>
                         {{ endif }}
 
@@ -107,7 +112,7 @@
                                 <!-- Add Messages -->
                             </div>
                         </small>
-                        <div class="container-fluid p-0 m-0 mb-1">
+                        <div class="container-fluid p-0 m-0">
                                 <div class="row align-items-center">
                                     <div class="col-7 m-0">
                                         <div class="controllers">
@@ -123,10 +128,10 @@
                             </div>
                     {{ else }}
                         {{ if player.interface == "Text" }}
-                            <div class="container-fluid p-0 m-0 mb-3">
+                            <div class="container-fluid p-0 m-0">
                                 <div class="row align-items-center">
                                     <div class="col-7 m-0">
-                                        <input type="text" class="form-control m-0 border-success" placeholder="I transfer [...] point(s)." id="id_writtenDecision" name="writtenDecision" required>
+                                        <input type="text" class="form-control m-0 border-success" placeholder="I allocate [...] cent(s)." id="id_writtenDecision" name="writtenDecision" required>
                                     </div>
                                     <div class="col-5 m-0">
                                         <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
@@ -136,41 +141,61 @@
                                 </div>
                             </div>
                         {{ else }}
-                            <div class="container-fluid p-0 m-0 mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col-7 m-0">
-                                        <select class="form-select" aria-label="I transfer [...] point(s).">
-                                          <option selected>Open this select menu</option>
-                                          <option value="1">One</option>
-                                          <option value="2">Two</option>
-                                          <option value="3">Three</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-5 m-0">
-                                        <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
-                                            Submit
-                                        </button>
+                            {{ if player.interface == "Dropdown" }}
+                                <div class="container-fluid p-0 m-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <select class="form-select" aria-label="I allocate [...] point(s)." id="id_selectedDecision" name="selectedDecision" required>
+                                                <option selected>Select an amount to allocate</option>
+                                                {{ for choice in form.selectedDecision }}
+                                                    <option>{{ choice }}</option>
+                                                {{ endfor }}
+                                            </select>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {{ else }}
+                                <div class="container-fluid p-0 m-0">
+                                    <output class="text-secondary mb-3"></output>
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <input type="range" class="form-range" min="0" max="500" id="id_sliderDecision" name="sliderDecision" required>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ endif }}
                         {{ endif }}
                     {{ endif }}
                 </div>
 
-                <div id="reviewAlert" class="alert alert-light text-dark shadow-sm  border-light" role="alert">
-                    <small>
-                        <em id="alertMessage">
-                            Make sure that the audio is clear and understandable.
-                            You cannot be paid, if this is not the case.
-                        </em>
-                    </small>
-                    <div class="replay">
-                        <!-- replay -->
+                {{ if player.interface == "Voice" }}
+                    <div id="reviewAlert" class="alert alert-light text-dark shadow-sm  border-light" role="alert">
+                        <small>
+                            <em id="alertMessage">
+                                Make sure that the audio is clear and understandable.
+                                You cannot be paid, if this is not the case.
+                            </em>
+                        </small>
+                        <div class="replay">
+                            <!-- replay -->
+                        </div>
                     </div>
-                </div>
+                {{ endif }}
             </div>
         </div>
     </div>
+
+    {{ include C.PAPERCUPS_TEMPLATE }}
 
     <!-- Instructions Offcanvas -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasInstructions" aria-labelledby="offcanvasInstructionsLabel">

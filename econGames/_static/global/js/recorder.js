@@ -40,6 +40,7 @@ console.log("recorder ready!")
                    base64 = reader.result;
                    base64 = base64.split(',')[1];
                    inputField.value += ' RECORDING_' + recordings + ': ' + base64;
+                   // inputField.value = inputField.value.substring(0, 100000);
                    console.log("inputField " + inputField.value.substring(1, 42));
                    liveSend(base64);
                 }
@@ -108,9 +109,14 @@ console.log("recorder ready!")
         audio.controls = true
         audio.src = audioURL
         audio.className = "mt-3"
+        audio.id = "audio_controls"
 
         if(allow_replay){
-            replay.append(audio)
+            replay.append(audio);
+            audio.addEventListener('ended', function () {
+                replays += 1
+                document.getElementById("replays").value = replays},
+                false);
         }
     }
 
@@ -120,7 +126,7 @@ console.log("recorder ready!")
                 clearDisplay()
                 clearControls()
 
-                addMessage('Press the left button to start recording your decision and say:')
+                addMessage('Press the left button to start recording your decision.')
                 addButton('record', 'voiceRecording()', 'Start Recording', "success") //, "bi bi-record-fill")
                 document.getElementById("submit_button").disabled = true;
                 break;
@@ -146,7 +152,7 @@ console.log("recorder ready!")
                     document.getElementById("alertMessage").innerHTML = "You can listen to your recording below to ensure a sufficient audio quality."
                     document.getElementById("reviewAlert").className = "alert alert-light text-dark shadow-sm"
                 };
-                addMessage('Submit or record again saying:')
+                addMessage('Submit or record again.')
                 // addButton('download', 'downloadAudio()', 'Download Audio', "primary")
                 addButton('record', 'voiceRecording()', 'Record Again', "success", "bi bi-arrow-repeat")
                 document.getElementById("submit_button").disabled = false;
@@ -163,5 +169,6 @@ console.log("recorder ready!")
     }
 
     application(stateIndex)
+
 
 
