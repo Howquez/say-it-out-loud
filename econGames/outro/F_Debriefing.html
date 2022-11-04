@@ -1,0 +1,114 @@
+{{ block scripts }}
+<script src="{% static 'global/js/record_time.js' %}"></script>
+{{ endblock }}
+
+{{ block content }}
+<body class="bg-light.bg-gradient">
+<img src="https://github.githubassets.com/images/modules/site/actions/hero-bg.jpg" id="bg" alt="" style="z-index: -1; position: fixed; left: 30; opacity: 0.90;">
+
+    <input type="hidden" name="privacy_time" id="privacy_time" value="0"/>
+
+    <!-- Decision Card -->
+    <div class="card mt-5 shadow-lg">
+        <div class="card-body">
+            <h1 class="display-4">Thank you!</h1>
+            <p class="lead">Your participation is greatly appreciated.</p>
+
+            <table class="table mt-5 mb-5 table-responsive">
+                <tbody>
+                    <tr>
+                        <th scope="row">Procedure</th>
+                        <td class="text-secondary">
+                            <small>
+                                You have finished the study.
+                                Next, we will analyze your decision to determine your earnings.
+                                We will then proceed with the payment.
+                                {{ if participant.interface == "Voice" }}
+                                    Note: This requires your recordings to be clear and understandable.
+                                    If neither an algorithm nor a research assistant can understand your decision,
+                                    we cannot pay you accordingly.
+                                {{ endif }}
+                            </small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Earnings</th>
+                        <td class="text-secondary">
+                            <small>
+                                <ul>
+                                    <li>
+                                        In this study, you made a decision where you could allocate an amount of up to
+                                        {{ session.ENDOWMENT }} to a stranger (denote him or her Person A).
+                                        While Person A earns the amount you allocated to him or her, you earn the remainder,
+                                        that is, every cent you did not allocate.
+                                    </li>
+                                    <li>
+                                        In addition, another stranger (denote him or her Person B) has been matched to
+                                        you. Person B faced the same decision as you did. As a consequence, you will also
+                                        earn, what Person B allocated to you.
+                                    </li>
+                                    <li>
+                                        Finally, you will receive a fixed fee of {{ session.config.participation_fee }} for
+                                        your participation.
+                                    </li>
+                                </ul>
+                                Your Earnings = {{ session.ENDOWMENT }} - Your Allocation + Person B's Allocation + {{ session.config.participation_fee }}
+                            </small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Confidentiality</th>
+                        <td class="text-secondary">
+                            <small>
+                                Please do not disclose research procedures to anyone who might participate in this study in
+                                the future as this could affect the results of the study.
+                            </small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Final Report</th>
+                        <td class="text-secondary">
+                            <small>
+                                If you would like to receive a copy of the final report of this study
+                                (or a summary of the findings) when it is completed, please feel free to contact us.
+                            </small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Contact Information</th>
+                        <td class="text-secondary">
+                            <small>
+                                If you have any questions or concerns regarding this study, its purpose or procedures, or if
+                                you have a research-related problem, please feel free to contact the researcher,
+                                Mr. Hauke Roggenkamp via eMail:
+                                <a href="mailto:hauke.roggenkamp@unisg.ch?subject=CLICCS B5 Umfrage">hauke.roggenkamp@unisg.ch</a>.
+                                If you have questions or concerns regarding your data, please identify yourself with your
+                                unique ID: <code>{{ participant.code }}</code>
+                            </small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-center text-secondary mb-4">
+                <small>
+                    You can close this window now.
+                </small>
+            </p>
+        </div>
+    </div>
+
+    <!-- GDPR Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasGDPR" aria-labelledby="offcanvasGDPRLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasGDPRLabel">Privacy Policy</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+
+            {{ include C.PRIVACY_TEMPLATE }}
+
+        </div>
+    </div>
+</body>
+{{ endblock }}
+

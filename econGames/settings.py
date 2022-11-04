@@ -3,7 +3,7 @@ from os import environ
 SESSION_CONFIGS = [
     dict(
         name="DG",
-        app_sequence=["dictatorGame"],
+        app_sequence=["dictatorGame", "outro"],
         num_demo_participants=5,
     ),
 ]
@@ -17,8 +17,8 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=1.00, doc=""
 )
 
-PARTICIPANT_FIELDS = []
-SESSION_FIELDS = []
+PARTICIPANT_FIELDS = ["interface", "allowReplay"]
+SESSION_FIELDS = ["ENDOWMENT", ]
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans

@@ -65,65 +65,6 @@ class Player(BasePlayer):
     replays = models.IntegerField(doc="counts the number of times a recording was replayed.", blank=True)
     privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened.", blank=True)
 
-# Questionnaire
-    privacy_1 = models.IntegerField(doc="I felt uncomfortable that my use of the user interface can be easily monitored.",
-                                    label="I felt uncomfortable that my use of the user interface can be easily monitored.",
-                                    widget=widgets.RadioSelect,
-                                    choices=[1, 2, 3, 4, 5, 6, 7]
-                                    )
-    privacy_2 = models.IntegerField(doc="I felt that my use of the user interface makes it easier to invade my privacy.",
-                                    label="I felt that my use of the user interface makes it easier to invade my privacy.",
-                                    widget=widgets.RadioSelect,
-                                    choices=[1, 2, 3, 4, 5, 6, 7]
-                                    )
-    privacy_3 = models.IntegerField(doc="I felt that my privacy could be violated by an external organization tracking my activities using the user interface.",
-                                    label="I felt that my privacy could be violated by an external organization tracking my activities using the user interface.",
-                                    widget=widgets.RadioSelect,
-                                    choices=[1, 2, 3, 4, 5, 6, 7]
-                                    )
-
-# Demographics
-    age = models.IntegerField(label="Please enter your age",
-                              min=18,
-                              max=99)
-
-    gender = models.IntegerField(
-        label="Please select your gender.",
-        choices=[
-            [1, "Female"],
-            [2, "Male"],
-            [3, "Diverse"],
-        ]
-    )
-
-    education = models.IntegerField(
-        label = "What is the highest level of education you achieved?",
-        choices=[
-            [1, "Some high school"],
-            [2, "High school diploma or G.E.D."],
-            [3, "Some college"],
-            [4, "Associate's degree"],
-            [5, "Bachelor's degree"],
-            [6, "Master's degree"],
-            [7, "Other"],
-            [8, "Doctorate"],
-        ]
-    )
-
-    income = models.IntegerField(
-        label = "What is your total household income per year?",
-        blank=True,
-        choices=[
-            [1, "Less than $10,000"],
-            [2, "$10,000 to $19,999"],
-            [3, "$20,000 to $34,999"],
-            [4, "$35,000 to $49,999"],
-            [5, "$50,000 to $74,999"],
-            [6, "$75,000 to $99,999"],
-            [7, "$100,000 to $149,999"],
-            [8, "$150,000 or more"],
-        ]
-    )
 
 
 # FUNCTIONS -----
@@ -134,6 +75,9 @@ def creating_session(subsession):
         player.interface = next(shuffle)
         if player.interface == "Voice":
             player.allowReplay = next(replay)
+        player.session.ENDOWMENT = C.ENDOWMENT
+        player.participant.interface = player.interface
+        player.participant.allowReplay = player.allowReplay
 
 def set_payoffs(group: Group):
     for p in group.get_players():
@@ -268,47 +212,9 @@ class E_Decision(Page):
         transcribe(player)
         # set_payoffs()
 
+
+
 class F_Results(Page):
-
-    @staticmethod
-    def is_displayed(player):
-        return player.round_number == 3
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(
-            redirect="",
-        )
-
-class G_Questionnaire(Page):
-    form_model = "player"
-    form_fields = ["privacy_1", "privacy_2", "privacy_3"]
-
-    @staticmethod
-    def is_displayed(player):
-        return player.round_number == 3
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(
-            redirect="",
-        )
-
-class H_Demographics(Page):
-    form_model = "player"
-    form_fields = ["age", "gender", "education", "income"]
-
-    @staticmethod
-    def is_displayed(player):
-        return player.round_number == 3
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(
-            redirect="",
-        )
-
-class I_Outro(Page):
 
     @staticmethod
     def is_displayed(player):
@@ -324,8 +230,4 @@ class I_Outro(Page):
 page_sequence = [A_Intro,
                  B_MicTest,
                  C_Instructions,
-                 E_Decision,
-                 # F_Results,
-                 G_Questionnaire,
-                 H_Demographics,
-                 I_Outro]
+                 E_Decision]

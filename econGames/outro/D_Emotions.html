@@ -38,38 +38,41 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-sm-8 col-md-8 col-lg-6">
+            <div class="col-sm-10 col-md-10 col-lg-6">
                 <!-- Decision Card -->
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
                         <p>
-                            Please indicate to what extent you agree or disagree with the following statements:
+                            The following is a list of words that describe different feelings and emotions. Read each
+                            item and then indicate to what extent you currently feel this way.
                         </p>
-
-                        {{ formfield_errors 'privacy_1' }}
 
                         <table class="table">
                             <colgroup>
-                               <col span="1" style="width: 46%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
-                               <col span="1" style="width: 8%;">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
                             </colgroup>
                             <tr>
                                 <td></td>
-                                <td colspan="3"><small>Strongly disagree<br>|</small></td>
+                                <td colspan="3"><small>Strongly<br>disagree</small></td>
                                 <td></td>
-                                <td colspan="3" class="text-end"><small>strongly agree<br>|</small></td>
+                                <td colspan="3" class="text-end"><small>Strongly<br>agree</small></td>
                             </tr>
                             {{ for field in form }}
                                 <tr>
-                                    <td>{{ field.label }}</td>
+                                    <td>
+                                        <small>{{ field.label }}</small>
+                                    </td>
                                     {{ for choice in field }}
-                                        <td>{{ choice }}</td>
+                                        <td>
+                                            <small>{{ choice }}</small>
+                                        </td>
                                     {{ endfor }}
                                 </tr>
                             {{ endfor }}
@@ -103,7 +106,7 @@
     <!-- Quit Offcanvas -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasQuit" aria-labelledby="offcanvasQuitLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasQuitLabel">Exit  study</h5>
+            <h5 class="offcanvas-title" id="offcanvasQuitLabel">Exit study</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">

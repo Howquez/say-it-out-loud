@@ -22,7 +22,7 @@
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow" data-toggle="tooltip" data-placement="bottom" title="Round {{ player.round_number }}">
-                Earnings
+                Demographics
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -38,15 +38,52 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-sm-8 col-md-8 col-lg-6">
+            <div class="col-sm-10 col-md-10 col-lg-6">
                 <!-- Decision Card -->
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
 
-                        Thank you for your participation.
+                        {{ formfields }}
 
+                        <div class="d-flex justify-content-center m-3">
+                            <button class="btn btn-primary shadow" type="submit" id="submitButton">
+                                Submit
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasInstructions" aria-labelledby="offcanvasInstructionsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasInstructionsLabel">Instructions</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                {{ include C.RULES_TEMPLATE }}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Quit Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasQuit" aria-labelledby="offcanvasQuitLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasQuitLabel">Exit  study</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p>
+                If you intend to leave this study without getting paid, click on the button below.
+            </p>
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-outline-danger m-5" href="{{ redirect }}" role="button" style="border-radius: 40px;">
+                    Exit
+                </a>
             </div>
         </div>
     </div>

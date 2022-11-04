@@ -3,7 +3,7 @@
 <hr class="mt-0">
 <p class="text-muted">
     In addition to the fixed show-up fee of {{ session.config.participation_fee }},
-    you receive an endowment of {{ C.ENDOWMENT }} for your decision.
+    you receive an endowment of {{ session.ENDOWMENT }} for your decision.
 </p>
 -->
 
@@ -13,9 +13,9 @@
 <p class="text-muted">
     You are randomly matched with another participant, who also participates in the study right now.
     You can decide how much money to allocate to this person.
-    Doing so, you can choose any amount between 0 and {{ C.ENDOWMENT }}.
+    Doing so, you can choose any amount between 0 and {{ session.ENDOWMENT }}.
     <br><br>
-    Of that {{ C.ENDOWMENT }}, every cent that is not allocated to the other person will be transferred to your bank
+    Of that {{ session.ENDOWMENT }}, every cent that is not allocated to the other person will be transferred to your bank
     account at the end of the study.
     Please note that your decision has an actual impact: Both you and the other person will be paid according
     to your choice.
@@ -24,13 +24,13 @@
 <p class="lead mb-0">Input</p>
 <hr class="mt-0">
 
-{{ if player.interface == "Voice" }}
+{{ if participant.interface == "Voice" }}
 <p class="text-muted">
     You will use your microphone to record your decision. To this end, you will see buttons that enable you to start, stop
     and submit your recording.
     In addition, you will see a fill-in-the-gap-text. Use it to communicate your decision.
     You can withdraw your recording and start a new one before you submit.
-    {{ if player.allowReplay }}
+    {{ if participant.allowReplay }}
     You can listen to your recording.
     {{ else }}
     You cannot listen to your recording, though.
@@ -38,20 +38,20 @@
 </p>
 {{ endif }}
 
-{{ if player.interface == "Text" }}
+{{ if participant.interface == "Text" }}
 <p class="text-muted">
     You will use your keyboard to record your decision. To this end, you will see a text field.
     In addition, you will see a fill-in-the-gap-text. Use it to communicate your decision.
 </p>
 {{ endif }}
 
-{{ if player.interface == "Dropdown" }}
+{{ if participant.interface == "Dropdown" }}
 <p class="text-muted">
     You will use your mouse to record your decision. To this end, you will see a text dropdown menu.
 </p>
 {{ endif }}
 
-{{ if player.interface == "Slider" }}
+{{ if participant.interface == "Slider" }}
 <p class="text-muted">
     You will use your mouse to record your decision. To this end, you will see a slider.
 </p>
