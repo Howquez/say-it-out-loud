@@ -1,5 +1,6 @@
 {{ block scripts }}
 <script src="{% static 'global/js/tech_covariates.js' %}"></script>
+<script src="{% static 'global/js/record_time.js' %}"></script>
 <script src="{% static 'global/js/popover.js' %}"></script>
 {{ if player.interface == "Voice"}}
     <script src="{% static 'global/js/recorder_setup.js' %}"></script>
@@ -36,6 +37,7 @@
     <input type="hidden" name="ipAddress"  id="ipAddress">
     <input type="hidden" name="recordings" id="recordings">
     <input type="hidden" name="replays"    id="replays">
+    <input type="hidden" name="instructions_time" id="instructions_time">
 
     <!-- Hidden inputs for voice interface -->
     <input type="hidden" name="spokenDecision" id="spokenDecision">

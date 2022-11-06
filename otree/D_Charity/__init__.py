@@ -27,7 +27,7 @@ class Player(BasePlayer):
     # testing
     test = models.IntegerField()
     # treatment variable
-    voice_interface = models.BooleanField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
+    interface = models.StringField(doc="treatment variable describing whether the allocator communicates his/her decision orally.")
 
     # primary outcome variable
     writtenDecision = models.StringField(doc="the share the dictator allocates to the recipient.",
@@ -121,9 +121,9 @@ class Player(BasePlayer):
 # FUNCTIONS
 def creating_session(subsession):
     import itertools
-    voice_interface = itertools.cycle([True, False])
+    interface = itertools.cycle(["Voice", "Text", "Dropdown"])
     for player in subsession.get_players():
-        player.voice_interface = next(voice_interface)
+        player.interface = next(interface)
 
 
 # PAGES

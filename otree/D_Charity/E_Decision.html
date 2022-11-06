@@ -1,6 +1,6 @@
 {{ block scripts }}
 <script src="{% static 'global/js/tech_covariates.js' %}"></script>
-{{ if player.voice_interface }}
+{{ if player.interface == "Voice"}}
     <script src="{% static 'global/js/recorder.js' %}"></script>
     <script src="{% static 'global/js/helper_decision.js' %}"></script>
 {{ endif }}
@@ -72,7 +72,7 @@
                             {{ formfield_errors 'voiceBase64' }}
                         </p>
 
-                        {{ if player.voice_interface }}
+                        {{ if player.interface == "Voice" }}
                             <div class="container-fluid p-0 m-0 mb-3">
                                     <div class="row align-items-center">
                                         <div class="col-7 m-0">
@@ -88,22 +88,42 @@
                                     </div>
                                 </div>
                         {{ else }}
-                            <div class="container-fluid p-0 m-0 mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col-7 m-0">
-                                        <input type="text" class="form-control m-0 border-success" placeholder="I transfer [...] point(s)." id="id_writtenDecision" name="writtenDecision" required>
-                                    </div>
-                                    <div class="col-5 m-0">
-                                        <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
-                                            Submit
-                                        </button>
+                            {{ if player.interface == "Text" }}
+                                <div class="container-fluid p-0 m-0 mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <input type="text" class="form-control m-0 border-success" placeholder="I transfer [...] point(s)." id="id_writtenDecision" name="writtenDecision" required>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {{ else }}
+                                <div class="container-fluid p-0 m-0 mb-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-7 m-0">
+                                            <select class="form-select" aria-label="I transfer [...] point(s).">
+                                              <option selected>Open this select menu</option>
+                                              <option value="1">One</option>
+                                              <option value="2">Two</option>
+                                              <option value="3">Three</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-5 m-0">
+                                            <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ endif }}
                         {{ endif }}
                     </div>
                 </div>
-                {{ if player.voice_interface }}
+                {{ if player.interface == "Voice" }}
                     <div class="alert alert-light shadow-sm mt-4 text-dark text-center">
                         <small>
                             <div class="display">

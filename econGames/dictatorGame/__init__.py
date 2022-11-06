@@ -3,6 +3,7 @@ import itertools
 # from google.cloud import speech
 # import os
 # import io
+import re
 from word2number import w2n
 
 
@@ -64,7 +65,7 @@ class Player(BasePlayer):
     recordings = models.IntegerField(doc="counts the number of times a recording was made.", blank=True)
     replays = models.IntegerField(doc="counts the number of times a recording was replayed.", blank=True)
     privacy_time = models.FloatField(doc="counts the number of seconds the privacy statement was opened.", blank=True)
-
+    instructions_time = models.FloatField(doc="counts the number of seconds the instructions were reviewed.", blank=True)
 
 
 # FUNCTIONS -----
@@ -90,7 +91,10 @@ def transcribe(player: Player):
         try:
             allocation = int(w2n.word_to_num(player.writtenDecision))
         except:
-            allocation = 9999
+            try:
+                allocation = int(re.sub("\D", "", player.writtenDecision))
+            except:
+                allocation = 9999
         player.allocation = allocation
     if player.interface == "Dropdown":
         player.allocation = player.selectedDecision
@@ -106,6 +110,12 @@ class A_Intro(Page):
     @staticmethod
     def is_displayed(player):
         return player.round_number == 1
+
+    @staticmethod
+    def js_vars(player: Player):
+        return dict(
+            template="intro",
+        )
 
 
 
@@ -155,7 +165,7 @@ class C_Instructions(Page):
 class E_Decision(Page):
     form_model = "player"
     form_fields = ["test", "allocation", "spokenDecision", "spokenDecisionBackup", "writtenDecision", "selectedDecision", "sliderDecision",
-                   "recordings", "replays",
+                   "recordings", "replays", "instructions_time",
                    "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
