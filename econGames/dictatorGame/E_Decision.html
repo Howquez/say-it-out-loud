@@ -154,10 +154,10 @@
                                 <div class="container-fluid p-0 m-0">
                                     <div class="row align-items-center">
                                         <div class="col-7 m-0">
-                                            <select class="form-select" aria-label="I allocate [...] point(s)." id="id_selectedDecision" name="selectedDecision" required>
-                                                <option selected>Select an amount to allocate</option>
+                                            <select class="form-select w-100" aria-label="I allocate [...] point(s)." id="id_selectedDecision" name="selectedDecision" required>
+                                                <option selected>Select an amount</option>
                                                 {{ for choice in form.selectedDecision }}
-                                                    <option>{{ choice }}</option>
+                                                    {{ choice }}
                                                 {{ endfor }}
                                             </select>
                                         </div>

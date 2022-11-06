@@ -1,9 +1,9 @@
 from otree.api import *
 import itertools
-from google.cloud import speech
-import os
-import io
-from word2number import w2n
+# from google.cloud import speech
+# import os
+# import io
+# from word2number import w2n
 
 
 doc = """
@@ -44,7 +44,7 @@ class Player(BasePlayer):
     writtenDecision = models.StringField(doc="text Interface: the share the dictator allocates to the recipient.", blank=True)
     spokenDecision = models.LongStringField(doc="voice Interface: the share the dictator allocates to the recipient.", blank=True)
     spokenDecisionBackup = models.LongStringField(doc="voice Interface: backup decision", blank=True)
-    sliderDecision = models.StringField(doc="slider Interface: the share the dictator allocates to the recipient.", blank=True)
+    sliderDecision = models.IntegerField(doc="slider Interface: the share the dictator allocates to the recipient.", blank=True)
     selectedDecision = models.IntegerField(doc="dropdown Interface: the share the dictator allocates to the recipient.",
                                            blank=True,
                                            choices=list(range(0, int(C.ENDOWMENT)*100+1)))
@@ -88,10 +88,9 @@ def set_payoffs(group: Group):
 def transcribe(player: Player):
     if player.interface == "Text":
         try:
-            allocation = int(w2n.word_to_num(player.writtenDecision))
+            allocation = 42 # int(w2n.word_to_num(player.writtenDecision))
         except:
             allocation = 9999
-        print(allocation)
         player.allocation = allocation
     if player.interface == "Dropdown":
         player.allocation = player.selectedDecision
