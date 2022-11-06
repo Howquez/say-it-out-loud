@@ -3,7 +3,7 @@ import itertools
 # from google.cloud import speech
 # import os
 # import io
-# from word2number import w2n
+from word2number import w2n
 
 
 doc = """
@@ -88,7 +88,7 @@ def set_payoffs(group: Group):
 def transcribe(player: Player):
     if player.interface == "Text":
         try:
-            allocation = 42 # int(w2n.word_to_num(player.writtenDecision))
+            allocation = int(w2n.word_to_num(player.writtenDecision))
         except:
             allocation = 9999
         player.allocation = allocation
