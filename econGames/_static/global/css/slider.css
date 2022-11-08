@@ -1,0 +1,9 @@
+input.notclicked[type=range]::-webkit-slider-thumb {
+  visibility: hidden;
+}
+input.notclicked[type=range]::-moz-range-thumb {
+  visibility: hidden;
+}
+input.notclicked[type=range]::-ms-thumb {
+  visibility: hidden;
+}

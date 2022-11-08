@@ -21,6 +21,12 @@
 </style>
 {{ endblock }}
 
+{{ if player.interface == "Slider" }}
+    {{ block styles }}
+    <link href="{% static 'global/css/slider.css' %}" rel="stylesheet">
+    {{ endblock }}
+{{ endif }}
+
 
 
 {{ block content }}
@@ -175,7 +181,7 @@
                                     <output class="text-secondary mb-3"></output>
                                     <div class="row align-items-center">
                                         <div class="col-7 m-0">
-                                            <input type="range" class="form-range" min="0" max="500" id="id_sliderDecision" name="sliderDecision" required>
+                                            <input type="range" class="form-range notclicked" min="0" max="500" id="id_sliderDecision" name="sliderDecision" required>
                                         </div>
                                         <div class="col-5 m-0">
                                             <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">
