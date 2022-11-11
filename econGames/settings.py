@@ -6,6 +6,11 @@ SESSION_CONFIGS = [
         app_sequence=["dictatorGame", "outro"],
         num_demo_participants=5,
     ),
+    dict(
+        name='Social_media_feed',
+        app_sequence=['feed'],
+        num_demo_participants=3,
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
