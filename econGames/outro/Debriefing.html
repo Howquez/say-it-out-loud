@@ -80,7 +80,9 @@
                                 If you have any questions or concerns regarding this study, its purpose or procedures, or if
                                 you have a research-related problem, please feel free to contact the researcher,
                                 Mr. Hauke Roggenkamp via eMail:
-                                <a href="mailto:hauke.roggenkamp@unisg.ch?subject=CLICCS B5 Umfrage">hauke.roggenkamp@unisg.ch</a>.
+                                <a href="mailto:hauke.roggenkamp@unisg.ch?subject=Allocation Game: {{ participant.code }}">
+                                    hauke.roggenkamp@unisg.ch
+                                </a>.
                                 If you have questions or concerns regarding your data, please identify yourself with your
                                 unique ID: <code>{{ participant.code }}</code>
                             </small>
@@ -89,23 +91,10 @@
                 </tbody>
             </table>
             <p class="text-center text-secondary mb-4">
-                <small>
-                    You can close this window now.
-                </small>
+                <a class="btn btn-primary shadow" href="{{ session.prolific_completion_url }}" role="button">
+                    Click here to complete the survey
+                </a>
             </p>
-        </div>
-    </div>
-
-    <!-- GDPR Offcanvas-->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasGDPR" aria-labelledby="offcanvasGDPRLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasGDPRLabel">Privacy Policy</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-
-            {{ include C.PRIVACY_TEMPLATE }}
-
         </div>
     </div>
 </body>

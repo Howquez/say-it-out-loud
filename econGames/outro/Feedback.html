@@ -36,7 +36,7 @@
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow">
-                Location
+                Feedback
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -64,14 +64,49 @@
                 <!-- Decision Card -->
                 <div class="card rounded mt-3 shadow-lg">
                     <div class="card-body">
-                        <p>
-                            Where were you while making the allocation decision in the current study?
+
+                        <table class="table">
+                            <colgroup>
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                               <col span="1">
+                            </colgroup>
+                            <tr>
+                                <td></td>
+                                <td colspan="3"><small>Not at all</small></td>
+                                <td></td>
+                                <td colspan="3" class="text-end"><small>Very well</small></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <small>{{ form.feedback_1.label }}</small>
+                                </td>
+                                {{ for choice in form.feedback_1 }}
+                                    <td>
+                                        <small>{{ choice }}</small>
+                                    </td>
+                                {{ endfor }}
+                            </tr>
+                        </table>
+
+                        <p class="mt-4 mb-0">
+                            <small>
+                                Was there anything that surprised you, that is, anything you expected to be different?
+                            </small>
                         </p>
+                        {{ form.feedback_2 }}
 
-                        <small>
-                            {{ form.location }}
-                        </small>
-
+                        <p class="mt-4 mb-0">
+                            <small>
+                                Do you have any suggestions how we can improve the instructions to make them more comprehensible?
+                            </small>
+                        </p>
+                        {{ form.feedback_3 }}
 
 
                         <div class="d-flex justify-content-center m-3">
@@ -84,8 +119,6 @@
             </div>
         </div>
     </div>
-
-    {{ include C.PAPERCUPS_TEMPLATE }}
 
     <!-- Instructions Offcanvas -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasInstructions" aria-labelledby="offcanvasInstructionsLabel">
