@@ -16,7 +16,7 @@ class C(BaseConstants):
     NAME_IN_URL = "DG"
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 3
-    ENDOWMENT = cu(5)
+    ENDOWMENT = cu(2)
     RULES_TEMPLATE = "dictatorGame/T_Rules.html"
     PRIVACY_TEMPLATE = "dictatorGame/T_Privacy.html"
     PAPERCUPS_TEMPLATE = __name__ + '/T_PAPERCUPS.html'
@@ -121,8 +121,8 @@ class A_Intro(Page):
 
 class B_MicTest(Page):
     form_model = "player"
-    form_fields = ["checkBase64", "recordings",
-                   "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
+    form_fields = ["checkBase64", "recordings", "replays",
+                   "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -166,7 +166,7 @@ class E_Decision(Page):
     form_model = "player"
     form_fields = ["test", "allocation", "spokenDecision", "spokenDecisionBackup", "writtenDecision", "selectedDecision", "sliderDecision",
                    "recordings", "replays", "instructions_time",
-                   "longitude", "latitude", "ipAddress", "width", "height", "devicePixelRatio", "userAgent"]
+                   "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod
     def is_displayed(player):

@@ -113,13 +113,13 @@ class Player(BasePlayer):
 
 # Privacy
     privacy_1 = models.IntegerField(
-        doc="I felt uncomfortable that my use of the user interface can be easily monitored.",
+        doc="I felt uncomfortable that this user interface can be easily monitored.",
         label="I felt uncomfortable that my use of the user interface can be easily monitored.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7]
     )
     privacy_2 = models.IntegerField(
-        doc="I felt that my use of the user interface makes it easier to invade my privacy.",
+        doc="I felt that this interface makes it easier to invade my privacy.",
         label="I felt that my use of the user interface makes it easier to invade my privacy.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7]
@@ -242,5 +242,5 @@ class Distribution(Page):
         )
 
 
-page_sequence = [Empathy, Image, Face_Concern, Self_Focus, Privacy,
-                 Distribution]
+page_sequence = [Distribution,
+                 Empathy, Image, Face_Concern, Self_Focus, Privacy]

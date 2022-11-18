@@ -37,10 +37,7 @@
     <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
     <input type="hidden" name="width"      id="width">
     <input type="hidden" name="height"     id="height">
-    <input type="hidden" name="longitude"  id="longitude">
-    <input type="hidden" name="latitude"   id="latitude">
     <input type="hidden" name="userAgent"  id="userAgent">
-    <input type="hidden" name="ipAddress"  id="ipAddress">
     <input type="hidden" name="recordings" id="recordings">
     <input type="hidden" name="replays"    id="replays">
     <input type="hidden" name="instructions_time" id="instructions_time">
@@ -83,7 +80,7 @@
                     <div class="card-body">
 
                         <p class="card-text mb-1">
-                            How many of your {{ C.ENDOWMENT }} do you want to allocate (in cents)?
+                            How much of your {{ C.ENDOWMENT }} do you want to allocate to the other person (in cents)?
                         </p>
 
                         <p class="mb-4 text-secondary">
@@ -101,9 +98,11 @@
                                 Please transmit your decision using the following phrase:
                             </small>
                             <br><br>
-                            <strong class="text-primary readAloud">
-                                <!-- Add Read Aloud Message for RegEx -->
-                            </strong>
+                            <p class="text-center">
+                                <strong class="text-primary readAloud">
+                                    <!-- Add Read Aloud Message for RegEx -->
+                                </strong>
+                            </p>
                             <div id="test-message">
                                 <!-- Output base64 string for testing purposes -->
                             </div>
@@ -114,9 +113,11 @@
                                     Transmit your decision by typing the following phrase into the left field:
                                 </p>
                             </small>
+                        <p class="text-center">
                             <strong class="text-primary">
                                 "I allocate [...] cent(s)."
                             </strong>
+                        </p>
                         {{ endif }}
 
                     </div>
@@ -203,8 +204,10 @@
                                 You cannot be paid, if this is not the case.
                             </em>
                         </small>
-                        <div class="replay">
-                            <!-- replay -->
+                        <div class="d-flex justify-content-center">
+                            <div class="replay">
+                                <!-- replay -->
+                            </div>
                         </div>
                     </div>
                 {{ endif }}

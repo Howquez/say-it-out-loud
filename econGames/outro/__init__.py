@@ -147,19 +147,19 @@ class Player(BasePlayer):
 
 # Interface
     interface_1 = models.IntegerField(
-        doc="Overall, the decision's interface worked very well technically.",
-        label="Overall, the decision's interface worked very well technically.",
+        doc="Overall, this interface worked very well technically.",
+        label="Overall, this interface worked very well technically.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 
     interface_2 = models.IntegerField(
-        doc="Visually, the decision's interface resembled other interfaces I think highly of.",
-        label="Visually, the decision's interface resembled other interfaces I think highly of.",
+        doc="Visually, this interface resembled other interfaces I think highly of.",
+        label="Visually, this interface resembled other interfaces I think highly of.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 
     interface_3 = models.IntegerField(
-        doc="The decision's interface was simple to navigate.",
+        doc="this interface was simple to navigate.",
         label="The decision's interface was simple to navigate.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
@@ -226,7 +226,7 @@ class Player(BasePlayer):
     )
 
     browser = models.IntegerField(
-        label="What operating system does your device use?",
+        label="Which browser did you use to complete this study?",
         blank=False,
         choices=[
             [1, "Chrome"],
@@ -243,7 +243,7 @@ class Player(BasePlayer):
         blank=False,
         choices=[
             [1, "Built-in microphone"],
-            [2, "Headphones"],
+            [2, "External microphone"],
             [3, "Other"],
         ]
     )
@@ -292,6 +292,11 @@ class Player(BasePlayer):
         ]
     )
 
+# Hypothesis
+    hypothesis = models.LongStringField(
+        doc="What do you think was the hypothesis of this research?",
+        label="What do you think was the hypothesis of this research?",
+        blank=False)
 
 # Feedback
     feedback_1 = models.IntegerField(
@@ -390,6 +395,18 @@ class Demographics(Page):
             redirect="",
         )
 
+
+class Hypothesis(Page):
+    form_model = "player"
+    form_fields = ["hypothesis"]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            redirect="",
+        )
+
+
 class Feedback(Page):
     form_model = "player"
     form_fields = ["feedback_1", "feedback_2", "feedback_3"]
@@ -416,4 +433,4 @@ class Debriefing(Page):
         )
 
 
-page_sequence = [Interface, Panas, Location, Technical, Demographics, Feedback, Debriefing]
+page_sequence = [Interface, Panas, Location, Technical, Demographics, Hypothesis, Feedback, Debriefing]

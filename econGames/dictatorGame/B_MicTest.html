@@ -25,11 +25,10 @@
     <input type="hidden" name="devicePixelRatio" id="devicePixelRatio">
     <input type="hidden" name="width"     id="width">
     <input type="hidden" name="height"    id="height">
-    <input type="hidden" name="longitude" id="longitude">
-    <input type="hidden" name="latitude"  id="latitude">
     <input type="hidden" name="userAgent" id="userAgent">
-    <input type="hidden" name="ipAddress" id="ipAddress">
     <input type="hidden" name="recordings" id="recordings">
+    <input type="hidden" name="replays"    id="replays">
+
 
     <!-- Hidden inputs for voice interface -->
     <input type="hidden" name="checkBase64" id="checkBase64">
@@ -40,7 +39,7 @@
     <nav class="navbar navbar-inverse m-0 p-0 sticky-top mb-4 justify-content-between bg-white shadow-sm" style="z-index:1">
         <h5>
             <span class="badge rounded-pill mt-4 ms-3 bg-dark shadow">
-                Microphone Test #{{ player.round_number }}
+                Microphone Test {{ player.round_number }} of 3
             </span>
         </h5>
         <div class="me-3" style="cursor: pointer;">
@@ -62,7 +61,6 @@
 {{ formfield_errors 'devicePixelRatio' }}
 {{ formfield_errors 'width' }}
 {{ formfield_errors 'height' }}
-{{ formfield_errors 'longitude' }}
 
 
     <div class="container">
@@ -75,18 +73,47 @@
                         <p class="card-text mb-1">
                             Before you start, we want to make sure your microphone is working properly.
                         </p>
+                        {{ if player.round_number == 1 }}
                         <p class="mb-4 text-secondary">
                             <small>
-                                Please make an audio recording of you reading the blue colored statement below out loud.
+                                This is the first test of your microphone. Please click on the
+                                <strong><code>Start Recording</code></strong> button below and read out aloud the below
+                                numbers. Click on <strong><code>Stop Recording</code></strong> when you’re done with the
+                                microphone check.
                             </small>
-                            <br>
+                            <br> <br>
+                            <small>
+                                You have the option to listen to your voice input in a media player below the recording
+                                button. If you can clearly understand your voice input, the microphone check was successful.
+                                If not, then please check your microphone settings as we can’t compensate your
+                                participation otherwise.
+                            </small>
+                            <br> <br>
+                            <small>
+                                Click the <strong><code>Submit</code></strong> button when done
+                                with the microphone check to proceed to the main task.
+                            </small>
                         </p>
+                        {{ else}}
+                        <p class="mb-4 text-secondary">
+                            <small>
+                                This is the
+                                {{ if player.round_number == 2 }} second {{ else }} third and final {{ endif }}
+                                test of your microphone. Please click on the
+                                <em>Start Recording</em> button below and read out aloud the below
+                                sentence. Click on <em>Stop Recording</em> and check that your
+                                recording was performed successfully. Click the <em>Submit</em> to
+                                proceed with the study.
+                            </small>
+                        </p>
+                        {{ endif }}
 
 
-                        <strong class="text-primary readAloud">
-                            <!-- Add Read Aloud Message for RegEx -->
-                        </strong>
-
+                        <p class="text-center">
+                            <strong class="text-primary readAloud">
+                                <!-- Add Read Aloud Message for RegEx -->
+                            </strong>
+                        </p>
 
                     </div>
                 </div>
@@ -119,13 +146,17 @@
                             You cannot be paid, if this is not the case.
                         </em>
                     </small>
-                    <div class="replay">
-                        <!-- replay -->
+                    <div class="d-flex justify-content-center">
+                        <div class="replay">
+                            <!-- replay -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {{ include C.PAPERCUPS_TEMPLATE }}
 
     <!-- Instructions Offcanvas -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasInstructions" aria-labelledby="offcanvasInstructionsLabel">

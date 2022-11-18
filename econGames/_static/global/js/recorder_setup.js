@@ -25,7 +25,7 @@
 
 // Based on template, choose the message to be read out loud
     var decision = "'I allocate [...] cents.'";
-    var counting = "'1, 2, 3, [...], 8, 9, 10'";
+    var counting = "'1, 2, 3, 4, 5, 6, 7, 8, 9, 10'";
     var blue = "'The blue spot is on the key again.'";
     var mama = "'My mama makes lemon jam.'";
     var peter = "'Peter will keep at the peak.'";

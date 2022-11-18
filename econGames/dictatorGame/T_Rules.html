@@ -11,13 +11,19 @@
 <p class="lead mb-0">Decision & Earnings</p>
 <hr class="mt-0">
 <p class="text-muted">
-    You are randomly matched with another participant, who also participates in the study right now.
-    You can decide how much money to allocate to this person.
-    Doing so, you can choose any amount between 0 and {{ session.ENDOWMENT }}.
+    In this part of the study we ask you to make one decision.
     <br><br>
-    Of that {{ session.ENDOWMENT }}, every cent that is not allocated to the other person will be transferred to your bank
-    account at the end of the study.
-    Please note that your decision has an actual impact: Both you and the other person will be paid according
+    To this end, you are randomly matched with another participant, who also participates in the study.
+    You can decide how much money to allocate to this person.
+    Doing so, you can choose any amount between $0.00 and {{ session.ENDOWMENT }}.
+    <br><br>
+    Of that {{ session.ENDOWMENT }}, every cent that is not allocated to the other person will be transferred to your
+    bank account at the end of the study. For example, if you allocate 0 cents to the other person, you will receive
+    an additional bonus of {{ session.ENDOWMENT }} and the other person receives a bonus of $0.00.
+    If you allocate {{ session.ENDOWMENT }} to the other person, you will receive a bonus of $0.00 and the other person
+    will receive a bonus of {{ session.ENDOWMENT }}
+    <br><br>
+    Please note that your choice has an actual impact: Both you and the other person will be paid according
     to your choice.
 </p>
 
@@ -64,14 +70,13 @@
 <ul class="text-muted">
     <li>You can choose any integer between 0 and 500 (cent).</li>
     <li>Once you have submitted your decision, you cannot make any changes.</li>
-    <li>The input you provide will be analyzed anonymously using computer software.</li>
 </ul>
 
 <p class="lead mb-0">Procedure</p>
 <hr class="mt-0">
 <p class="text-muted">
     After you have made your decision, you have to answer a short questionnaire.
-    Once you have done so, you have finished this study and we will start administering the payments.
+    Once you have done so, you have finished this study, and we will start administering the payments.
 </p>
 
 <!--
