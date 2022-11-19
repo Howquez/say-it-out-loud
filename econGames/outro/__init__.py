@@ -24,6 +24,12 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+# completed the survey
+    completed_survey = models.BooleanField(
+        doc="True as soon as participants submit Feedback page",
+        initial=False
+    )
+
 # PANAS scale
     guilt = models.IntegerField(
         doc="Guilty.",
@@ -409,7 +415,7 @@ class Hypothesis(Page):
 
 class Feedback(Page):
     form_model = "player"
-    form_fields = ["feedback_1", "feedback_2", "feedback_3"]
+    form_fields = ["feedback_1", "feedback_2", "feedback_3", "completed_survey"]
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -420,7 +426,8 @@ class Feedback(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         player.participant.finished = True
-        player.session.prolific_completion_url ="https://www.ibt.unisg.ch/"
+        player.completed_survey = player.participant.finished
+        player.session.prolific_completion_url = "https://www.ibt.unisg.ch/"
 
 
 class Debriefing(Page):
