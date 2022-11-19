@@ -4,8 +4,10 @@
 <script src="{% static 'global/js/popover.js' %}"></script>
 {{ if player.interface == "Voice"}}
     <script src="{% static 'global/js/recorder_setup.js' %}"></script>
-    <script src="{% static 'global/js/recorder.js' %}"></script>
     <script src="{% static 'global/js/recorder_helper.js' %}"></script>
+    <script src="{% static 'global/js/recorder.js' %}"></script>
+    <script src="{% static 'global/js/recorder_check.js' %}"></script>
+
 {{ endif }}
 {{ if player.interface == "Slider"}}
     <script src="{% static 'global/js/slider.js' %}"></script>
@@ -40,6 +42,7 @@
     <input type="hidden" name="userAgent"  id="userAgent">
     <input type="hidden" name="recordings" id="recordings">
     <input type="hidden" name="replays"    id="replays">
+    <input type="hidden" name="micUsed"    id="micUsed">
     <input type="hidden" name="instructions_time" id="instructions_time">
 
     <!-- Hidden inputs for voice interface -->
@@ -182,7 +185,7 @@
                                     <output class="text-secondary mb-3"></output>
                                     <div class="row align-items-center">
                                         <div class="col-7 m-0">
-                                            <input type="range" class="form-range notclicked" min="0" max="500" id="id_sliderDecision" name="sliderDecision" required>
+                                            <input type="range" class="form-range notclicked" min="0" max="200" id="id_sliderDecision" name="sliderDecision" required>
                                         </div>
                                         <div class="col-5 m-0">
                                             <button type="submit" id="submit_button" class="btn-primary btn m-0 w-100 bi bi-send">

@@ -58,19 +58,19 @@ function getResolution() {
 //let response = []
 //request.open('GET', 'https://api.ipify.org?format=json', true) // set true for asynchronous
 //request.setRequestHeader('Accept', 'application/json')
-
-
-request.onreadystatechange = function () {
-  if (this.readyState === 4 && this.status === 200) {
-    response = JSON.parse(this.responseText)
-    document.getElementById('ipAddress').value = response.ip
-  }
-};
-request.send(response)
-
+//
+//
+//request.onreadystatechange = function () {
+//  if (this.readyState === 4 && this.status === 200) {
+//    response = JSON.parse(this.responseText)
+//    document.getElementById('ipAddress').value = response.ip
+//  }
+//};
+//request.send(response)
+/*
 // Call functions
 getResolution();
-getLocation();
+getLocation();*/
 
 // Get User Agent (better safe than sorry)
 document.getElementById('userAgent').value = navigator.userAgent

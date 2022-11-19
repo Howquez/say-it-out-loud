@@ -55,9 +55,7 @@ class Player(BasePlayer):
     checkBase64 = models.LongStringField(doc="base64 encoded voice input on mic test screens.", blank=True)
 
 # Technical Covariates (aka web tracking)
-    longitude = models.StringField(doc="the participant's location: longitude.", blank=True)
-    latitude = models.StringField(doc="the participant's location: latitude.", blank=True)
-    ipAddress = models.StringField(doc="the participant's IP address", blank=True)
+    micUsed = models.BooleanField(doc="checks whether the microphone measured some amplitude.")
     width = models.IntegerField(doc="the participant's screen width.", blank=True, initial = 0)
     height = models.IntegerField(doc="the participant's screen width.", blank=True, initial = 0)
     devicePixelRatio = models.FloatField(doc="the participant's ratio of pixel sizes.", blank=True, initial = 0)
@@ -121,8 +119,12 @@ class A_Intro(Page):
 
 class B_MicTest(Page):
     form_model = "player"
-    form_fields = ["checkBase64", "recordings", "replays",
+    form_fields = ["micUsed", "checkBase64", "recordings", "replays",
                    "width", "height", "devicePixelRatio", "userAgent"]
+
+    @staticmethod
+    def is_displayed(player):
+        return player.interface == "Voice"
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -165,7 +167,7 @@ class C_Instructions(Page):
 class E_Decision(Page):
     form_model = "player"
     form_fields = ["test", "allocation", "spokenDecision", "spokenDecisionBackup", "writtenDecision", "selectedDecision", "sliderDecision",
-                   "recordings", "replays", "instructions_time",
+                   "micUsed", "recordings", "replays", "instructions_time",
                    "width", "height", "devicePixelRatio", "userAgent"]
 
     @staticmethod

@@ -52,7 +52,11 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <h4 class="mt-3">
-                        You have reached the main part of this study.
+                        {{ if player.interface == "Voice" }}
+                            You have reached the main part of this study.
+                        {{ else }}
+                            This is the main part of the study.
+                        {{ endif }}
                     </h4>
                     <p class="text-secondary">
                         You are about to participate in a decision making study. If you follow the instructions carefully,

@@ -25,7 +25,7 @@ console.log("recorder ready!")
             }
 
             mediaRecorder.onstop = () => {
-                blob = new Blob(chunks, {type: 'audio/wav; codecs=0'});
+                blob = new Blob(chunks, {type: 'audio/mpeg'}); //{type: 'audio/wav; codecs=0'});
                 chunks = []
                 audioURL = window.URL.createObjectURL(blob)
                 // sendData(blob);
@@ -112,6 +112,7 @@ console.log("recorder ready!")
         const audio = document.createElement('audio')
         audio.controls = true
         audio.src = audioURL
+        audio.type = 'audio/mp3'
         audio.className = "mt-3"
         audio.id = "audio_controls"
 
