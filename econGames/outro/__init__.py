@@ -27,7 +27,8 @@ class Player(BasePlayer):
 # completed the survey
     completed_survey = models.BooleanField(
         doc="True as soon as participants submit Feedback page",
-        initial=False
+        initial=False,
+        blank=True
     )
 
 # PANAS scale
@@ -166,7 +167,7 @@ class Player(BasePlayer):
 
     interface_3 = models.IntegerField(
         doc="this interface was simple to navigate.",
-        label="The decision's interface was simple to navigate.",
+        label="This interface was simple to navigate.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 
@@ -177,20 +178,20 @@ class Player(BasePlayer):
         choices=[1, 2, 3, 4, 5, 6, 7])
 
     interface_5 = models.IntegerField(
-        doc="The interface allowed me to efficiently communicate my decision.",
-        label="The interface allowed me to efficiently communicate my decision.",
+        doc="This interface allowed me to efficiently communicate my decision.",
+        label="This interface allowed me to efficiently communicate my decision.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 
     interface_6 = models.IntegerField(
-        doc="The user interface was somewhat intimidating to me.",
-        label="The user interface was somewhat intimidating to me.",
+        doc="This interface was somewhat intimidating to me.",
+        label="This interface was somewhat intimidating to me.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 
     interface_7 = models.IntegerField(
-        doc="It scared me to think that I could provide a wrong answer using the user interface.",
-        label="It scared me to think that I could provide a wrong answer using the user interface.",
+        doc="It scared me to think that I could provide a wrong answer using this interface.",
+        label="It scared me to think that I could provide a wrong answer using this interface.",
         widget=widgets.RadioSelect,
         choices=[1, 2, 3, 4, 5, 6, 7])
 

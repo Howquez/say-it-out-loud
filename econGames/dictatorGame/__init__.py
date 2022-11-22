@@ -55,7 +55,7 @@ class Player(BasePlayer):
     checkBase64 = models.LongStringField(doc="base64 encoded voice input on mic test screens.", blank=True)
 
 # Technical Covariates (aka web tracking)
-    micUsed = models.BooleanField(doc="checks whether the microphone measured some amplitude.")
+    micUsed = models.BooleanField(doc="checks whether the microphone measured some amplitude.", blank=True)
     width = models.IntegerField(doc="the participant's screen width.", blank=True, initial = 0)
     height = models.IntegerField(doc="the participant's screen width.", blank=True, initial = 0)
     devicePixelRatio = models.FloatField(doc="the participant's ratio of pixel sizes.", blank=True, initial = 0)

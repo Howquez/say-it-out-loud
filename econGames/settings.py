@@ -2,9 +2,14 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name="DG",
+        name="Dictator_Game",
         app_sequence=["dictatorGame", "mediators", "moderators", "outro"],
         num_demo_participants=5,
+    ),
+    dict(
+        name='Testing',
+        app_sequence=["dictatorGame", "outro"],
+        num_demo_participants=10,
     ),
     dict(
         name='Social_media_feed',
