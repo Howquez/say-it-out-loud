@@ -40,3 +40,9 @@ vignettes/*.pdf
 
 # Desktop Services
 .DS_Store
+
+# Feed files
+econGames/feed
+
+# data files
+data/

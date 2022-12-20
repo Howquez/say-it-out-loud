@@ -428,7 +428,6 @@ class Feedback(Page):
     def before_next_page(player, timeout_happened):
         player.participant.finished = True
         player.completed_survey = player.participant.finished
-        player.session.prolific_completion_url = "https://www.ibt.unisg.ch/"
 
 
 class Debriefing(Page):

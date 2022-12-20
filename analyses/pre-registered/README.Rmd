@@ -58,7 +58,7 @@ Importantly, participants encounter one of two interfaces to communicate their d
 # install.packages("pacman")
 
 pacman::p_load(rmarkdown, knitr, magrittr, data.table, stringr, lubridate, 
-               base64enc, googleLanguageR, xfun)
+               base64enc, googleLanguageR, xfun, av, ggplot2)
 
 # unfortunately, there is one github project we need where the repository's
 # name does not match the package's name.
@@ -94,7 +94,8 @@ Some of the columns contain `base64`-encoded strings that can be decoded to audi
 
 ```{r readData}
 # read data
-dt <- data.table(read.csv(file = recentCSV))
+dt <- data.table(data.table::fread(file = recentCSV))
+dt <- dt[outro.1.player.completed_survey == TRUE]
 ```
 
 ```{r renameCols}
@@ -113,9 +114,10 @@ para <- dt[,
              session_code, session_label, session_is_demo, session_config_participation_fee,
              participant_index_in_pages, participant_time_started_utc,
              participant_payoff, participant_interface, participant_allowReplay,
-             dg_1_longitude, dg_1_latitude, dg_1_ipAddress, dg_1_width, dg_1_height,
+             dg_1_width, dg_1_height,
              dg_1_devicePixelRatio, dg_1_userAgent, dg_1_privacy_time
              )]
+data.table::setkey(para, participant_code)
 ```
 
 ```{r selectBenchmarkVoice}
@@ -125,23 +127,71 @@ benchmark <- dt[,
                   dg_1_recordings, dg_1_checkBase64, 
                   dg_2_checkBase64, dg_2_recordings,
                   dg_3_checkBase64, dg_3_recordings)]
+data.table::setkey(benchmark, participant_code)
 ```
 
 ```{r selectDecisionData}
 # select data from allocation decision
 decision <- dt[,
                .(session_code, participant_code,
-                 dg_3_interface, dg_3_allowReplay, dg_3_recordings, dg_3_allocation, 
-                 dg_3_writtenDecision, dg_3_spokenDecision, dg_3_decisionBase64)]
+                 dg_3_interface, dg_3_allowReplay, dg_3_recordings, dg_3_replays, 
+                 dg_3_allocation, dg_3_writtenDecision, dg_3_spokenDecision, dg_3_decisionBase64)]
+decision$dg_3_writtenDecision %<>% as.character()
+data.table::setkey(decision, participant_code)
 ```
 
-```{r selectselfreports}
+```{r select_selfreports, eval = FALSE}
 # select self reported data from the "outro" app
 cols <- c("session_code", "participant_code", 
-          str_subset(string = names(dt), pattern = "outro.*"))
+          str_subset(string = names(dt), pattern = "mediators.*|moderators.*|outro.*"))
 
 selfreports <- dt[, ..cols]
 
+rm(cols)
+```
+
+```{r select_mediators}
+cols <- c("session_code", "participant_code", 
+          str_subset(string = names(dt), pattern = "mediators.*"))
+
+mediators <- dt[, ..cols]
+data.table::setkey(mediators, participant_code)
+rm(cols)
+```
+
+```{r select_moderators}
+cols <- c("session_code", "participant_code", 
+          str_subset(string = names(dt), pattern = "moderators.*"))
+moderators <- dt[, ..cols]
+data.table::setkey(moderators, participant_code)
+rm(cols)
+```
+
+```{r transform_moderators}
+slimR <- function(dt = moderators,
+                  columns){
+        for(col in columns){
+                var <- col
+                cols <- names(moderators) %>% str_subset(pattern = var)
+                assign(x = var,
+                       value = moderators[, 
+                                          min(.SD, na.rm = TRUE), 
+                                          .SDcols = cols, 
+                                          by = participant_code][, V1],
+                       envir = .GlobalEnv)
+        }
+}
+
+slimR()
+
+
+```
+
+```{r select_outro}
+cols <- c("session_code", "participant_code", 
+          str_subset(string = names(dt), pattern = "outro.*"))
+outro <- dt[, ..cols]
+data.table::setkey(outro, participant_code)
 rm(cols)
 ```
 
@@ -177,6 +227,16 @@ for(file in spokenDecisions){
 }
 ```
 
+```{r convert_to_FLAC, eval = FALSE}
+for(file in spokenDecisions){
+        print(file)
+        print(av_media_info(file))
+}
+
+# av_audio_convert(audio = "../../data/wav/yyql562x_decision.wav",
+#                          output = "../../data/wav/yyql562x_decision.wav")
+```
+
 
 # Speech to Text
 
@@ -209,37 +269,329 @@ Having authenticated, I create an empty character vector `spokenDecision` that w
 
 # populate writtenDecision vector in for loop
 for(file in spokenDecisions){ # note that there is a difference between spokenDecisions & spokenDecision
-        tmp <- gl_speech(audio_source = file, 
+        
+        skip <- FALSE
+        
+        if(decision[filePath == file, is.na(dg_3_writtenDecision)]){
+                tryCatch(
+                tmp <- gl_speech(audio_source = file, 
                          languageCode = "en", 
                          encoding = "FLAC",
-                         sampleRateHertz = 44100,
+                         # sampleRateHertz = 44100,
                          customConfig = list('audio_channel_count' = 1)
-                         )
+                         ),
+                error = function(e) {
+                        skip <<- TRUE
+                        tmp  <- data.frame(a = NA, b = NA)}
+                )
+                
+                if(skip) {next}
         
-        transcript <- tmp$transcript[,1]
+                transcript <- tmp$transcript[,1][1]
         
-        decision[filePath == file,
-           dg_3_writtenDecision := transcript]
+                decision[filePath == file,
+                   dg_3_writtenDecision := transcript]
+                }
 }
 
-decision[dg_3_interface == "Voice",
-         dg_3_writtenDecision] %>% kable()
+# decision[, dg_3_writtenDecision] %>% kable()
 ```
 
 The quality of the transcription is rather bad, but good enough as each of the numbers contained is correct. To listen to the corresponding audio files, you have to browse to `../../data/wav/`. The original text of the first three entries were _I transfer [1, 3, 6] point(s)_. The last two entries should read _I donate [7, 9] points_.
 
+```{r}
+decision[participant_code == 'qxj1t5y2',
+         dg_3_allocation := 50]
+decision[is.na(dg_3_allocation) & dg_3_interface == 'Voice',
+         participant_code] %>% kable()
+```
+
+<!--
+#### Baseline Data
+
+Because I also have the baseline recordings where participants say _I have read and understand the instructions_, we can transcribe them as well. Since I do not intend to analyze the content, I set the corresponding code chunk option such that the following few lines are not evaluated. This implies, that I will not use the information in what follows until some voice analytics is applied.
+
+```{r gl_speech_2, eval = realData}
+# run this code chunk if working with real data. It may be too costly for
+# simulated data
+
+# initiate empty vector
+long[, spokenBaseline := as.character("")]
+
+# populate vector in for loop
+for(file in baselines){
+        tmp <- gl_speech(audio_source = file, 
+                         languageCode = "en", 
+                         encoding = "FLAC", 
+                         sampleRateHertz = 44100, 
+                         customConfig = list('audio_channel_count' = 1))
+        
+        transcript <- tmp$transcript[,1]
+        
+        long[baselineFilePath == file,
+           spokenBaseline := transcript]
+}
+
+# display vector
+kable(long[!is.na(baselineBase64),
+           .(spokenBaseline)])
+```
+
+### Simulations
+
+If you do not want to spend money, execute the following code chunks. They will not call the [Google Speech-to-Text](https://cloud.google.com/speech-to-text/) such that you won't get billed. Be aware that the following chunks just pretend to transcribe voice data, though.
+
+```{r pretend_to_speech1, eval = !realData}
+# create random ints, convert them to text and paste them into a sentence
+long[, spokenDecision := as.character("")]
+randint <- sample(x = 0:10,
+                  replace = TRUE,
+                  size = long[voiceInterface == 1, .N]) %>% 
+        n2w()
+
+long[voiceInterface == 1,
+     spokenDecision := paste0("I donate ", randint, " points.")]
+
+```
+
+```{r pretend_to_speech2, eval = !realData}
+# also fake the sentence where participants confirm their understanding
+long[, spokenBaseline := "I have read and understand the instructions"]
+```
+
+-->
 
 # Words to Numbers
 
 To extract the quantities described in `dg_3_writtenDecision` vector, one can use the `wordstonumbers` package and apply the corresponding function (`words_to_numbers`) to it. As this just replaces the spelled number with a digit, one also has to remove all the characters from the respective strings. I do so, and write the result as a numeric into a variable called `spokenDecision2num`. 
 
 ```{r words2numbers1, warning = FALSE}
-speech2number <- apply(X = decision[, .(dg_3_writtenDecision)],
-                       MARGIN = 1,
-                       FUN = words_to_numbers) %>%
-        str_replace_all(pattern = "\\D",
-                        replacement = "") %>%
-        as.numeric()
 
-decision[, spokenDecision2num := speech2number]
+for(i in 1:decision[, .N]){
+        if(decision[i, !is.na(dg_3_writtenDecision) & dg_3_interface == "Voice"]){
+                decision[i, dg_3_allocation := words_to_numbers(dg_3_writtenDecision) %>%
+                        str_replace_all(pattern = "\\$0\\.",
+                                        replacement = "") %>%
+                        str_replace_all(pattern = "\\D",
+                                        replacement = "") %>%
+                        as.numeric()]
+        }
+}
+
+# decision[, allocation := words_to_numbers(dg_3_writtenDecision) %>%
+#                         str_replace_all(pattern = "\\$0\\.",
+#                                         replacement = "") %>%
+#                         str_replace_all(pattern = "\\D",
+#                                         replacement = "") %>%
+#                         as.numeric()]
+# 
+# words_to_numbers("I allocate zero cents")
+
+# speech2number <- apply(X = decision[, .(dg_3_writtenDecision)],
+#                        MARGIN = 1,
+#                        FUN = words_to_numbers) %>%
+#         str_replace_all(pattern = "\\D",
+#                         replacement = "") %>%
+#         as.numeric()
+
+# decision[, spokenDecision2num := speech2number]
 ```
+
+
+```{r}
+# decision[is.na(dg_3_allocation), .N]
+# decision[is.na(dg_3_allocation) & dg_3_interface == 'Voice', .N]
+# decision[dg_3_interface == 'Voice', .N]
+decision[,
+         .(mean = mean(dg_3_allocation, na.rm = TRUE),
+           N = .N,
+           sd = sd(dg_3_allocation, na.rm = TRUE),
+           na = sum(is.na(dg_3_allocation)),
+           zeros = sum(dg_3_allocation == 0, na.rm = TRUE),
+           fair = sum(dg_3_allocation  == 100, na.rm = TRUE),
+           ultrafair = sum(dg_3_allocation > 100, na.rm = TRUE)),
+         by = dg_3_interface]
+```
+
+```{r calculate_payments}
+EXCHANGE_RATE <- 1.2
+payments <- cbind(decision[, .(participant_code, pay_0 = 273, pay_1 = 200 - dg_3_allocation)],
+                  decision[sample(participant_code), .(pay_2 = dg_3_allocation, allocator = participant_code)])
+
+payments[, sum(participant_code == allocator)]
+
+# there is one participant with a corrupt audio file, I'll assume he allocated 50%
+payments[is.na(pay_1), pay_1 := 100]
+payments[is.na(pay_2), pay_2 := 100]
+
+payments[, payoff := pay_1 + pay_2]
+payoffs <- payments[dt[, .(participant_code, participant_label)], on = 'participant_code']
+
+payoffs <- payoffs[, .(participant_label, payoff = round(payoff / 100 / EXCHANGE_RATE, digits = 2))]
+payoffs[, sum(payoff)]
+write.table(x = payoffs,
+            file = '../../data/payments/SIOL_Pilot_2022-11-22.csv',
+            quote = FALSE,
+            sep = ',',
+            row.names = FALSE,
+            col.names = FALSE)
+```
+
+```{r write_data, eval = FALSE}
+# DT <- decision[mediators, on = 'participant_code'][moderators, on = 'participant_code'][outro, on = 'participant_code'][para, on = 'participant_code'][benchmark, on = 'participant_code']
+# 
+# write.csv(x = DT, file = '../../data/processed/SIOL_Pilot_2022-11-22.csv')
+
+dt <- data.table(data.table::fread(file = '../../data/processed/SIOL_Pilot_2022-11-22.csv'))
+```
+
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                axis.title = element_text(size = 8),
+                legend.text = element_text(size = 16),
+                plot.caption = element_text(size = 16,
+                                            colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+colors <- c("#F3B05C", "#1E4A75", "#65B5C0", "#AD5E21")
+
+cPrimary = "#EB6969"
+cSecondary = "#FFF04B"
+cInfo = "#36BFA2"
+```
+
+
+```{r, warning = FALSE}
+dt[, voice := ifelse(test = dg_3_interface == 'Voice',
+                     yes  = TRUE,
+                     no   = FALSE)]
+ggplot(data = dt,
+       mapping = aes(x = dg_3_allocation/2, fill = voice)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, 0.025),
+               expand = c(0, NA)) +
+        scale_fill_manual(values = c(cPrimary, cSecondary),
+                    labels = c("Non-voice-based interfaces", "Voice-based interface")) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+
+```{r, warning = FALSE}
+ggplot(data = dt,
+       mapping = aes(x = dg_3_allocation/2, fill = voice, group = dg_3_interface)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, 0.025),
+               expand = c(0, NA)) +
+        scale_fill_manual(values = c(cPrimary, cSecondary),
+                    labels = c("Non-voice-based interfaces", "Voice-based interface")) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+```{r}
+ggplot(data = dt,
+       mapping = aes(x = dg_3_allocation/2, fill = dg_3_interface)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, 0.025),
+               expand = c(0, NA)) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+
+
+<!--
+
+# Result
+
+Finally, one can select some technical covariates (`techC`) as well as covariates stemming from the questionnaire (`questC`) that do not change within the session and merge them to the `long` data.table.
+
+```{r technicalCovariates}
+# create DT with technical covariates from first period
+# (assuming they are constant across rounds)
+techC <- dt[,
+            .(session.code,
+              participant.code,
+              participant.label,
+              recordings       = D_Charity.1.player.recordings, # need to assess that in each round
+              longitude        = D_Charity.1.player.longitude,
+              latitude         = D_Charity.1.player.latitude,
+              ipAddress        = D_Charity.1.player.ipAddress,
+              screenWidth      = D_Charity.1.player.width,
+              screenHeight     = D_Charity.1.player.height,
+              devicePixelRatio = D_Charity.1.player.devicePixelRatio,
+              userAgent        = D_Charity.1.player.userAgent)]
+
+# merge
+long <- data.table::merge.data.table(x = long,
+                                     y = techC,
+                                     by = c("session.code",
+                                            "participant.code",
+                                            "participant.label"))
+```
+
+```{r questionnaireCovariates}
+# create DT with covariates from questionnaire
+questC <- dt[,
+             .(session.code,
+               participant.code,
+               participant.label,
+               Q1 = D_Charity.1.player.comp_1)]
+
+# merge
+long <- data.table::merge.data.table(x = long,
+                                     y = questC,
+                                     by = c("session.code",
+                                            "participant.code",
+                                            "participant.label"))
+```
+
+The resulting data looks as follows.
+
+```{r displayFinalData}
+display <- long
+display[!is.na(voiceBase64), voiceBase64 := voiceBase64 %>% str_sub(1500, 1575) %>% paste0("...")]
+display[!is.na(baselineBase64), baselineBase64 := baselineBase64 %>% str_sub(1500, 1575) %>% paste0("...")]
+kable(display)
+```
+
+```{r saveData}
+# save data as rda and csv files
+save(long, file = "../../data/processed/longData.rda")
+write.csv(long, file = "../../data/processed/longData.csv")
+```
+
+
+# Analysis
+
+```{r}
+long[round == 1,
+     .(mean = mean(donation, na.rm = TRUE)),
+     by = c("voiceInterface", "round")] %>% 
+        kable()
+```
+
+-->

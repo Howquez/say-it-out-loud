@@ -11,11 +11,6 @@ SESSION_CONFIGS = [
         app_sequence=["dictatorGame", "outro"],
         num_demo_participants=10,
     ),
-    dict(
-        name='Social_media_feed',
-        app_sequence=['feed'],
-        num_demo_participants=3,
-    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
@@ -24,10 +19,10 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=1.00, doc=""
+    real_world_currency_per_point=1.00, participation_fee=2.73, doc=""
 )
 
-PARTICIPANT_FIELDS = ["interface", "allowReplay", "page_sequence", "finished"]
+PARTICIPANT_FIELDS = ["interface", "allowReplay", "page_sequence", "finished", 'tweets']
 SESSION_FIELDS = ["ENDOWMENT", "prolific_completion_url"]
 
 # ISO-639 code
