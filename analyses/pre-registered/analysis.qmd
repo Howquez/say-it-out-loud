@@ -1,0 +1,449 @@
+---
+title: "Analysis"
+format: html
+---
+
+# Setup
+
+```{r packages}
+#| warning: false
+
+# install this package once, it'll then install and load all remaining packages
+# install.packages("pacman")
+
+pacman::p_load(rmarkdown, knitr, magrittr, data.table, stringr, lubridate, 
+               base64enc, googleLanguageR, xfun, av, ggplot2)
+
+# unfortunately, there is one github project we need where the repository's
+# name does not match the package's name.
+pacman::p_load_gh("fsingletonthorn/words_to_numbers")
+library(wordstonumbers)
+```
+
+```{r design}
+# ggplot layout
+layout <- theme(panel.background = element_rect(fill = "transparent", color = NA),
+                plot.background = element_rect(fill = "transparent", color = NA),
+                panel.grid = element_blank(),
+                panel.grid.major.y = element_blank(),
+                legend.key = element_rect(fill = "transparent"),
+                axis.line = element_line(size = 0.25),
+                axis.ticks = element_line(size = 0.25),
+                axis.title = element_text(size = 8),
+                legend.text = element_text(size = 16),
+                plot.caption = element_text(size = 16,
+                                            colour = "#555555"),
+                legend.title = element_blank()
+)
+
+# color
+colors <- c("#F3B05C", "#1E4A75", "#65B5C0", "#AD5E21")
+
+cPrimary = "#EB6969"
+cSecondary = "#FFF04B"
+cInfo = "#36BFA2"
+```
+
+```{r read_data}
+# we ran the pilot in two steps, for this reason, we have 2 csv files
+dt_1 <- fread(file = '../../data/raw/Pilot_2022-11-23.csv')
+dt_2 <- fread(file = '../../data/raw/Pilot_2022-12-21.csv')
+
+# because of another experiment conducted in the meantime, both data sets have 
+# irrelevant columns that can be omitted
+cols <- names(dt_2) %>% str_subset(pattern = 'tweets', negate = TRUE)
+
+# rbind relevant cols and only those participants, who clicked on the link
+# and thereby opened the experiment's first page
+dt <- rbind(dt_1[participant.visited == TRUE, ..cols],
+            dt_2[participant.visited == TRUE, ..cols])
+
+# remove objects
+rm(list = c('dt_1', 'dt_2', 'cols'))
+```
+
+```{r renameCols}
+# rename columns
+names(dt) %>% 
+        str_replace_all(pattern = "dictatorGame", replacement = "dg") %>%
+        str_replace_all(pattern = "\\.(player|subsession|group)", replacement = "") %>%
+        str_replace_all(pattern = "\\._?", replacement = "_") %>%
+        setnames(x = dt, old = names(dt))
+```
+
+```{r treatment_var}
+
+# treatment var
+dt[participant_interface == 'Voice' & participant_allowReplay == FALSE, 
+   participant_treatment := 'Voice_no_replay']
+dt[participant_interface == 'Voice' & participant_allowReplay == TRUE, 
+   participant_treatment := 'Voice_replay']
+dt[participant_interface == 'Text', 
+   participant_treatment := participant_interface]
+dt[participant_interface == 'Dropdown', 
+   participant_treatment := participant_interface]
+dt[participant_interface == 'Slider', 
+   participant_treatment := participant_interface]
+dt[, participant_treatment := ordered(participant_treatment, 
+                                      levels = c('Voice_no_replay', 'Voice_replay', 'Text', 'Dropdown', 'Slider'))]
+
+# voice var
+dt[participant_treatment %>% str_detect(pattern = 'Voice', negate = TRUE),
+   participant_voice_treatment := FALSE]
+dt[participant_treatment %>% str_detect(pattern = 'Voice', negate = FALSE),
+   participant_voice_treatment := TRUE]
+```
+
+# Attrition
+
+```{r attrition}
+dt[, 
+   .N, 
+   by = participant_treatment] 
+dt[outro_1_completed_survey == TRUE, 
+   .N, 
+   by = participant_treatment]
+dt[outro_1_completed_survey == FALSE, 
+   .N, 
+   by = participant_treatment]
+```
+
+# Subset
+
+```{r subset}
+dt <- dt[outro_1_completed_survey == TRUE]
+```
+
+# Convert Base64
+
+```{r unwrapDecisions}
+# the pattern needed is "(?<=RECORDING_2: ).*" where 2 should be a variable (dg_3_recordings)
+
+dt[dg_3_interface == "Voice",
+   dg_3_latestVoiceRecording := dg_3_spokenDecision %>% 
+           str_extract(pattern = paste0("(?<=RECORDING_", dg_3_recordings, ": ).*"))]
+```
+
+```{r convertBase64}
+
+# create file names for the wav files that will be generated using a for loop
+dt[dg_3_interface == "Voice",
+   filePath := paste0("../../data/wav/",
+                      participant_code,
+                      "_decision.wav")]
+
+
+# create a vector of "speaking" decisions to loop over
+spokenDecisions <- dt[dg_3_interface == "Voice", filePath]
+
+# run loop to decode and store corresponding files
+for(file in spokenDecisions){
+        dt[filePath == file,
+           base64decode(what = dg_3_latestVoiceRecording,
+                        output = file(filePath,
+                                      "wb"))]
+}
+```
+
+# Text to Speech
+
+```{r auth}
+gl_auth("../../../ibtanalytics-0ba5cc05ef54.json")
+```
+
+
+```{r gl_speech}
+#| eval: false
+
+# run this code chunk if working with real data. It may be too costly for
+# simulated data
+
+# populate writtenDecision vector in for loop
+for(file in spokenDecisions){ # note that there is a difference between spokenDecisions & spokenDecision
+        
+        skip <- FALSE
+        
+        if(dt[filePath == file, is.na(dg_3_writtenDecision)]){
+                tryCatch(
+                tmp <- gl_speech(audio_source = file, 
+                         languageCode = "en", 
+                         encoding = "FLAC",
+                         # sampleRateHertz = 44100,
+                         customConfig = list('audio_channel_count' = 1)
+                         ),
+                error = function(e) {
+                        skip <<- TRUE
+                        tmp  <- data.frame(a = NA, b = NA)}
+                )
+                
+                if(skip) {next}
+        
+                transcript <- tmp$transcript[,1][1]
+        
+                dt[filePath == file,
+                   dg_3_writtenDecision := transcript]
+                }
+}
+
+# decision[, dg_3_writtenDecision] %>% kable()
+dt[participant_voice_treatment == TRUE, dg_3_writtenDecision]
+```
+
+```{r manual_work}
+# identify files Google couldn't transcribe
+dt[participant_voice_treatment == TRUE & is.na(dg_3_writtenDecision),
+   .(participant_code)][order(participant_code)]
+
+# listen to eauch of them and type input manually
+dt[participant_code == 'ze5eojmb', dg_3_allocation := 0]
+```
+
+# Words to Numbers
+
+```{r words2numbers}
+#| warning: false
+
+speech2number <- apply(X = dt[!is.na(dg_3_writtenDecision),
+                              .(dg_3_writtenDecision)],
+                       MARGIN = 1,
+                       FUN = words_to_numbers) %>%
+        str_replace_all(pattern = "\\$0\\.",
+                        replacement = "") %>%
+        str_replace(pattern = '\\$1$',
+                    replacement = '100') %>%
+        str_replace_all(pattern = "\\D",
+                        replacement = "") %>%
+        as.numeric()
+
+dt[!is.na(dg_3_writtenDecision),
+   dg_3_allocation := speech2number]
+
+# dt[!is.na(dg_3_writtenDecision), .(dg_3_writtenDecision, dg_3_allocation)]
+```
+
+```{r check_large_allocations}
+dt[dg_3_allocation > 200]
+
+dt[participant_code == 'pa9hcp2y', dg_3_allocation := 100]
+dt[participant_code == 'f4jpocpd', dg_3_allocation := 50]
+```
+
+
+# Remove Moderators' Sparseness
+
+The sequence of moderators was randomized. Under the hood, this was accomplished by playing multiple rounds of the `moderators` app where each page was displayed in a random round. This randomization happened on a player level which is why one player may have seen the `greed_avoidance` question on page 1 while others have seen these questions on page 2, 3 or 4. 
+
+As a consequence, the `moderators`' data is quite sparse. To remove the sparseness, I proceed as follows: first, I select all relevant columns and store them in a temporary object called `mods`. Second, use this object and differentiate between each round creating objects `r_1`, `r_2`, and so on where I unify the column names. Third, I `rbind()` these objects (`r_1`, `r_2`, ...). Finally, I take the mean of each moderator variable by participant, to remove unwanted rows.^[Due to the `rbind()`, each variable has four rows of which three are `NA`. Taking the mean, min, max, ... by `participant_code` removes theses `NA`s.]
+
+```{r select_moderators}
+cols <- str_detect(string = names(dt), pattern = 'participant_code|moderators')
+mods <- dt[, ..cols]
+```
+
+```{r differentiate_rounds}
+r_1 <- str_detect(string = names(mods), pattern = 'participant_code|_1_')
+m_1 <- mods[, ..r_1]
+names(m_1) %>% 
+        str_replace_all(pattern = "\\d_", replacement = "") %>%
+        setnames(x = m_1)
+
+r_2 <- str_detect(string = names(mods), pattern = 'participant_code|_2_')
+m_2 <- mods[, ..r_2]
+names(m_2) %>% 
+        str_replace_all(pattern = "\\d_", replacement = "") %>%
+        setnames(x = m_2)
+
+r_3 <- str_detect(string = names(mods), pattern = 'participant_code|_3_')
+m_3 <- mods[, ..r_3]
+names(m_3) %>% 
+        str_replace_all(pattern = "\\d_", replacement = "") %>%
+        setnames(x = m_3)
+
+r_4 <- str_detect(string = names(mods), pattern = 'participant_code|_4_')
+m_4 <- mods[, ..r_4]
+names(m_4) %>% 
+        str_replace_all(pattern = "\\d_", replacement = "") %>%
+        setnames(x = m_4)
+```
+
+```{r rbind_moderators}
+m <- rbindlist(list(m_1, m_2, m_3, m_4))
+```
+
+```{r mean_moderators}
+cols <- names(m) %>% str_detect(pattern = '_\\d$')
+
+tmp1 <- m[, 
+          lapply(.SD, mean, na.rm = TRUE), 
+          .SDcols = cols, 
+          by = participant_code]
+```
+
+```{r merge_mods}
+cols <- str_detect(string = names(dt), 
+                   pattern = 'moderators',
+                   negate = TRUE)
+tmp2 <- dt[, ..cols]
+data <- tmp2[tmp1, on = .(participant_code = participant_code)]
+```
+
+```{r clean_up}
+rm(list = c('mods', 'm_1', 'r_1', 'm_2', 'r_2', 'm_3', 'r_3', 'm_4', 'r_4', 'm', 'tmp1', 'tmp2', 'cols'))
+```
+
+# Select Columns
+
+```{r columns}
+
+tmp <- c('session_code', 'participant_code', 'participant_interface', 'participant_allowReplay', 'participant_voice_treatment', 'dg_3_recordings', 'dg_3_replays', 'dg_3_allocation', 'dg_3_writtenDecision', 'dg_3_spokenDecision',
+          str_subset(string = names(data), pattern = 'mediators.*'),
+          str_subset(string = names(data), pattern = 'moderators.*'),
+          str_subset(string = names(data), pattern = 'outro.*'))
+
+select <- str_detect(string = tmp, pattern = 'payoff|_id_in_|_role$|round_number', negate = TRUE)
+
+cols <- tmp[select]
+
+processed <- data[, ..cols]
+setnames(x = processed,
+         new = names(processed) %>% 
+                 str_replace_all(pattern = '_\\d_',
+                                 replacement = '_'))
+
+rm(list = c('tmp', 'select', 'cols'))
+```
+
+# Write & Read
+
+```{r write_data}
+
+# write data
+data.table::fwrite(x = processed, file = '../../data/processed/SIOL_Pilot_2022-12-22.csv')
+
+# remove data objects in global environment
+rm(list = c('data', 'dt', 'processed'))
+
+# read the data that was saved 5 lines above
+dt <- data.table(data.table::fread(file = '../../data/processed/SIOL_Pilot_2022-12-22.csv'))
+
+# remove base64 string (if not needed) since it saves quite some space
+dt[, dg_spokenDecision := NULL]
+
+# data.table::fwrite(x = dt[, .(participant_code, session_code,
+#                               outro_hypothesis)],
+#                    file = '../../data/processed/SIOL_Pilot_2022-12-22_Hypotheses.csv')
+
+```
+
+# Bonus Payments
+
+```{r calculate_payments}
+#| eval: false
+
+EXCHANGE_RATE <- 1.2
+
+base <- dt[!is.na(dg_allocation)]
+data.table::setkey(base, participant_code)
+payments <- cbind(base[, .(participant_code, pay_0 = 273, pay_1 = 200 - dg_allocation)],
+                  base[sample(participant_code), .(pay_2 = dg_allocation, allocator = participant_code)])
+
+payments[, sum(participant_code == allocator)]
+
+payments[, payoff := pay_1 + pay_2]
+payoffs <- payments[dt[session_code == 'y9fd8sl8', .(participant_code, participant_label)], on = 'participant_code']
+
+payoffs <- payoffs[!is.na(pay_1), .(participant_label, payoff = round(payoff / 100 , digits = 2))]
+payoffs[, sum(payoff, na.rm = TRUE)]
+write.table(x = payoffs[payoff > 0],
+            file = '../../data/payments/SIOL_Pilot_2022-12-22.csv',
+            quote = FALSE,
+            sep = ',',
+            row.names = FALSE,
+            col.names = FALSE)
+```
+
+# Results
+
+## Regressions
+
+```{r}
+lm_1 <- lm(dg_allocation ~ participant_treatment, data = dt[participant_voice_treatment == TRUE])
+lm_1 %>% summary()
+
+lm_2 <- lm(dg_allocation ~ participant_interface, data = dt[participant_interface != 'Slider'])
+lm_2 %>% summary()
+```
+
+## Vizualisations
+
+```{r main_effect}
+dt[,
+   .(mean_allocation = dg_allocation %>% mean(na.rm = TRUE)),
+   by = participant_treatment][order(participant_treatment)]
+```
+
+```{r}
+ggplot(data = dt,
+       mapping = aes(x = dg_allocation/2, fill = participant_voice_treatment)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, NA),
+               expand = c(0, NA)) +
+        scale_fill_manual(values = c(cPrimary, cSecondary),
+                    labels = c("Non-voice-based interfaces", "Voice-based interface")) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation in % of Endowment', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+
+```{r, warning = FALSE}
+ggplot(data = dt,
+       mapping = aes(x = dg_allocation/2, fill = participant_voice_treatment, group = participant_interface)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, NA),
+               expand = c(0, NA)) +
+        scale_fill_manual(values = c(cPrimary, cSecondary),
+                    labels = c("Non-voice-based interfaces", "Voice-based interface")) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation in % of Endowment', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+
+```{r, warning = FALSE}
+ggplot(data = dt[participant_voice_treatment == TRUE],
+       mapping = aes(x = dg_allocation/2, fill = participant_allowReplay %>% as.logical())) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, NA),
+               expand = c(0, NA)) +
+        scale_fill_manual(values = c(cPrimary, cSecondary)) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation in % of Endowment', y = 'Density', title = 'Replay allowed?') +
+        layout +
+        theme(legend.position = 'top')
+```
+
+```{r}
+ggplot(data = dt,
+       mapping = aes(x = dg_allocation/2, fill = participant_interface)) + 
+        geom_density(alpha = 0.5) +
+        scale_x_continuous(limits = c(0, 100),
+               expand = c(0, NA)) +
+        scale_y_continuous(limits = c(0, NA),
+               expand = c(0, NA)) +
+        geom_vline(xintercept = 50,
+             lty = 2) +
+        labs(x = 'Allocation in % of Endowment', y = 'Density') +
+        layout +
+        theme(legend.position = 'top')
+```
+
